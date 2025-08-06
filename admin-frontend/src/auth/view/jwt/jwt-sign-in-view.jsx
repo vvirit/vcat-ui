@@ -5,15 +5,14 @@ import { useBoolean } from 'minimal-shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
+
+import { login } from 'src/service/auth.js';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
@@ -21,7 +20,7 @@ import { Form, Field } from 'src/components/hook-form';
 import { useAuthContext } from '../../hooks';
 import { getErrorMessage } from '../../utils';
 import { FormHead } from '../../components/form-head';
-import { signInWithPassword } from '../../context/jwt';
+import { signInWithPassword } from '../../context/jwt/index.js';
 
 // ----------------------------------------------------------------------
 
@@ -62,8 +61,8 @@ export function JwtSignInView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
-      await signInWithPassword({ username: data.username, password: data.password });
+      // await signInWithPassword({ username: data.username, password: data.password });
+      const loginData = await login(data.username, data.password);
       await checkUserSession?.();
       router.refresh();
     } catch (error) {

@@ -22,6 +22,17 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    port: PORT,
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080', // 你的后端地址
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ''), // 可选：去掉 /api 前缀
+      },
+    },
+  },
   resolve: {
     alias: [
       {
@@ -30,6 +41,5 @@ export default defineConfig({
       },
     ],
   },
-  server: { port: PORT, host: true },
   preview: { port: PORT, host: true },
 });

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/admin-backend/admin-backend.iml" filepath="$PROJECT_DIR$/admin-backend/admin-backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/vcat-bot.iml" filepath="$PROJECT_DIR$/.idea/vcat-bot.iml" />
     </modules>
   </component>

@@ -1,0 +1,17 @@
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  mvc:
+    servlet:
+      path: /api
+  application:
+    name: vcat-admin-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vcat-admin
+    username: postgres
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
