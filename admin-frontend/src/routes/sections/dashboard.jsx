@@ -18,9 +18,10 @@ const PageThree = lazy(() => import('src/pages/dashboard/three'));
 const PageFour = lazy(() => import('src/pages/dashboard/four'));
 const PageFive = lazy(() => import('src/pages/dashboard/five'));
 const PageSix = lazy(() => import('src/pages/dashboard/six'));
-const NodeListPage = lazy(() => import('src/pages/dashboard/task/node-list'));
+const NodeListPage = lazy(() => import('src/pages/dashboard/task/node/list.jsx'));
 const TaskListPage = lazy(() => import('src/pages/dashboard/task/task-list'));
 const InterparkPerformListPage = lazy(() => import('src/pages/dashboard/interpark/perform/list'));
+const ProxyListPage = lazy(() => import('src/pages/dashboard/config/proxy/list'));
 
 // ----------------------------------------------------------------------
 
@@ -61,6 +62,10 @@ export const dashboardRoutes = [
           { path: 'node-list', element: <NodeListPage /> },
           { path: 'task-list', element: <TaskListPage /> },
         ],
+      },
+      {
+        path: 'config',
+        children: [{ path: 'proxy-list', element: <ProxyListPage /> }],
       },
       {
         path: 'interpark',

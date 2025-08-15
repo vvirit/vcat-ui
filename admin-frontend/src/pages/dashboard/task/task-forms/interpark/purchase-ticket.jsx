@@ -25,7 +25,7 @@ const InterparkPurchaseTicketForm = () => {
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 2, width: '100%' }}>
       <Grid container spacing={2}>
         <Grid size={6}>
-          <FormControl fullWidth sx={{ mb: 2 }} size="small">
+          <FormControl fullWidth sx={{ mb: 2, margin: 0 }} size="small">
             <InputLabel id="type-label">Proxy</InputLabel>
             <Controller
               name="type"

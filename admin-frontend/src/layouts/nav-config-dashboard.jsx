@@ -51,7 +51,7 @@ export const navData = [
     ],
   },
   {
-    subheader: 'Task',
+    subheader: 'System',
     items: [
       {
         title: 'Task',
@@ -60,6 +60,14 @@ export const navData = [
         children: [
           { title: 'Nodes', path: paths.dashboard.task.nodeList },
           { title: 'Tasks', path: paths.dashboard.task.taskList },
+        ],
+      },
+      {
+        title: 'Config',
+        path: paths.dashboard.config.root,
+        icon: ICONS.label,
+        children: [
+          { title: 'Proxy', path: paths.dashboard.config.proxyList },
         ],
       },
     ],

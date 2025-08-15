@@ -51,6 +51,10 @@ export const paths = {
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
+    config: {
+      root: `${ROOTS.DASHBOARD}/config`,
+      proxyList: `${ROOTS.DASHBOARD}/config/proxy-list`,
+    },
     task: {
       root: `${ROOTS.DASHBOARD}/task`,
       nodeList: `${ROOTS.DASHBOARD}/task/node-list`,

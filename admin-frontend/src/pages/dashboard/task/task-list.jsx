@@ -50,17 +50,17 @@ export default function TaskListPage() {
       label: 'Action',
       render: (row) => (
         <IconButton
-            color="error"
-            aria-label="delete"
-            sx={{
-              minWidth: 0,
-              minHeight: 0,
-              padding: 0.5,
-              margin: 0,
-            }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
+          color="error"
+          aria-label="delete"
+          sx={{
+            minWidth: 0,
+            minHeight: 0,
+            padding: 0.5,
+            margin: 0,
+          }}
+        >
+          <Iconify icon="solar:trash-bin-trash-bold" />
+        </IconButton>
       ),
     },
   ];
@@ -122,7 +122,13 @@ export default function TaskListPage() {
         </Button>
       </div>
       <Card>
-        <DataTable columns={columns} data={data}/>
+        <DataTable
+          columns={columns}
+          data={{
+            content: data,
+            totalElements: 300,
+          }}
+        />
       </Card>
       <Dialog
         fullWidth
@@ -135,8 +141,8 @@ export default function TaskListPage() {
         }}
       >
         <DialogTitle>New Task</DialogTitle>
-        <DialogContent sx={{overflow: 'visible', px: 3}}>
-          <InterparkPurchaseTicketForm/>
+        <DialogContent sx={{ overflow: 'visible', px: 3, padding: 0 }}>
+          <InterparkPurchaseTicketForm />
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => setRunTaskModalOpen(false)}>
