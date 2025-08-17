@@ -22,8 +22,10 @@ const DataTable = forwardRef(
     {
       columns,
       data = {
-        content: [],
-        totalPages: 0,
+        list: [],
+        pageIndex: 0,
+        pageSize: 10,
+        totalElements: 0,
       },
       size = 'medium',
       rowId = 'id',
@@ -54,7 +56,7 @@ const DataTable = forwardRef(
     }));
 
     const headList = [];
-    const itemList = data.content;
+    const itemList = data.list;
 
     if (enableCheck) {
       headList.push(

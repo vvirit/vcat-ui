@@ -1,10 +1,12 @@
 package com.vecat.admin.service
 
+import com.vecat.admin.controller.PageView
 import com.vecat.admin.entity.InterparkSeatRotatePool
 import com.vecat.admin.entity.InterparkSeatRotatePoolItem
 import com.vecat.admin.repository.InterparkPerformRepository
 import com.vecat.admin.repository.InterparkSeatRotatePoolRepository
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -71,15 +73,16 @@ class InterparkSeatRotatePoolService(
     )
 
     data class UpdatePoolDTO(
+        val id: Long,
         val performId: Long,
         val name: String,
-        val items: List<AddPoolDTOItem>
+        val items: List<UpdatePoolDTOItem>
     )
 
     @Transactional
     fun updatePool(dto: UpdatePoolDTO) {
         val perform = performRepository.findById(dto.performId).orElseThrow()
-        val pool = poolRepository.findById(dto.performId).orElseThrow()
+        val pool = poolRepository.findById(dto.id).orElseThrow()
         pool.apply {
             items.clear()
             name = dto.name
@@ -106,9 +109,47 @@ class InterparkSeatRotatePoolService(
         poolRepository.deleteById(id)
     }
 
+    data class InterparkSeatRotatePoolPageDTO(
+        val id: Long,
+        val name: String,
+        val performId: Long,
+        val performName: String,
+        var items: List<InterparkSeatRotatePoolPageDTOItem>,
+    )
+
+    data class InterparkSeatRotatePoolPageDTOItem(
+        val roundId: Long,
+        val blockId: Long,
+        var seatGrade: String,
+        var seatGradeName: String,
+        var floor: String,
+        var rowNo: String,
+        var seatNo: String,
+    )
+
     @Transactional
-    fun getPagedList(page: Int, size: Int): Page<InterparkSeatRotatePool> {
+    fun getPagedList(page: Int, size: Int): PageView<InterparkSeatRotatePoolPageDTO> {
         val pageable = PageRequest.of(page, size)
-        return poolRepository.findAll(pageable)
+        val entityPage = poolRepository.findAll(pageable)
+        val list = entityPage.content.map { pool ->
+            InterparkSeatRotatePoolPageDTO(
+                pool.id!!,
+                pool.name,
+                pool.perform.id!!,
+                pool.perform.name,
+                pool.items.map { item ->
+                    InterparkSeatRotatePoolPageDTOItem(
+                        item.round.id!!,
+                        item.block.id!!,
+                        item.seatGrade,
+                        item.seatGradeName,
+                        item.floor,
+                        item.rowNo,
+                        item.seatNo,
+                    )
+                }
+            )
+        }
+        return PageView(list, page, size, entityPage.totalElements)
     }
 }

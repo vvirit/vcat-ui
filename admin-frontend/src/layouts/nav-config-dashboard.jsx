@@ -80,6 +80,7 @@ export const navData = [
         path: paths.dashboard.interpark.root,
         children: [
           { title: 'Performs', path: paths.dashboard.interpark.performList },
+          { title: 'Seat rotate pools', path: paths.dashboard.interpark.seatRotatePoolList },
         ],
       },
       {

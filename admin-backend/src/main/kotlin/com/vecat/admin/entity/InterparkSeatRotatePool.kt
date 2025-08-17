@@ -1,6 +1,7 @@
 package com.vecat.admin.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.vecat.admin.base.BaseEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -37,6 +38,7 @@ data class InterparkSeatRotatePool(
         fetch = FetchType.LAZY,
     )
     @OrderBy("id")
+    @JsonIgnoreProperties(value = ["hibernateLazyInitializer", "handler"])
     var items: MutableList<InterparkSeatRotatePoolItem> = mutableListOf()
 ) : BaseEntity()
 

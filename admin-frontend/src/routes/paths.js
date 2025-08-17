@@ -63,6 +63,7 @@ export const paths = {
     interpark: {
       root: `${ROOTS.DASHBOARD}/interpark`,
       performList: `${ROOTS.DASHBOARD}/interpark/perform-list`,
+      seatRotatePoolList: `${ROOTS.DASHBOARD}/interpark/seat-rotate-pool-list`,
     },
   },
 };

@@ -18,6 +18,11 @@ export async function updateInterparkPerform(perform) {
   return data;
 }
 
+export async function getAllPerforms() {
+  const response = await axios.get(`/api/interpark-perform/all`);
+  return response.data;
+}
+
 export async function getPagedInterparkPerforms(page) {
   const response = await axios.get(`/api/interpark-perform?page=${page.page}&pageSize=${page.pageSize}`);
   return response.data;

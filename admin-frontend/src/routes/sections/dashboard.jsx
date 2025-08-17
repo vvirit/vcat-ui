@@ -21,6 +21,7 @@ const PageSix = lazy(() => import('src/pages/dashboard/six'));
 const NodeListPage = lazy(() => import('src/pages/dashboard/task/node/list.jsx'));
 const TaskListPage = lazy(() => import('src/pages/dashboard/task/task-list'));
 const InterparkPerformListPage = lazy(() => import('src/pages/dashboard/interpark/perform/list'));
+const InterparkSeatRotatePoolListPage = lazy(() => import('src/pages/dashboard/interpark/seat-rotate-pool/list'));
 const ProxyListPage = lazy(() => import('src/pages/dashboard/config/proxy/list'));
 
 // ----------------------------------------------------------------------
@@ -69,7 +70,10 @@ export const dashboardRoutes = [
       },
       {
         path: 'interpark',
-        children: [{ path: 'perform-list', element: <InterparkPerformListPage /> }],
+        children: [
+          { path: 'perform-list', element: <InterparkPerformListPage /> },
+          { path: 'seat-rotate-pool-list', element: <InterparkSeatRotatePoolListPage /> },
+        ],
       },
     ],
   },

@@ -1,11 +1,12 @@
-import { useState, useImperativeHandle, forwardRef } from 'react';
+import {useState, useImperativeHandle, forwardRef} from 'react';
 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
-import { Table, TableRow, TableBody, TableCell, TableHead, TableContainer } from '@mui/material';
+import {Table, TableRow, TableBody, TableCell, TableHead, TableContainer} from '@mui/material'
+import Autocomplete from "@mui/material/Autocomplete";
 
-const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
+const EditTable = forwardRef(({columns, initialData, sx}, ref) => {
 
   const [data, setData] = useState(initialData || [{}]);
   const [menuRowIndex, setMenuRowIndex] = useState();
@@ -16,7 +17,7 @@ const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
   const handleChange = (index, key, value) => {
     setData((prev) => {
       const newData = [...prev];
-      newData[index] = { ...newData[index], [key]: value };
+      newData[index] = {...newData[index], [key]: value};
       return newData;
     });
   };
@@ -29,14 +30,14 @@ const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
   }));
 
   headList.push(
-    <TableCell key="index" sx={{ width: '40px' }}>
+    <TableCell key="index" sx={{width: '40px'}}>
       &nbsp;
     </TableCell>
   );
 
   columns.forEach((column) => {
     headList.push(
-      <TableCell key={column.key} sx={{ width: column.width || 'auto' }}>
+      <TableCell key={column.key} sx={{width: column.width || 'auto'}}>
         {column.label}
       </TableCell>
     );
@@ -79,24 +80,43 @@ const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
           {column.render ? (
             column.render(row)
           ) : (
-            <TextField
-              variant="standard"
-              fullWidth
-              value={row[column.dataIndex] || ''}
-              InputProps={{
-                disableUnderline: true,
-              }}
-              sx={{
-                '& .MuiOutlinedInput-notchedOutline': {
-                  border: 'none',
-                },
-                '& .MuiInputBase-root': {
-                  border: 'none',
-                  borderRadius: 0, // 可选：去圆角
-                },
-              }}
-              onChange={(e) => handleChange(index, column.dataIndex, e.target.value)}
-            />
+            column.type === 'autocomplete' ? (
+              <>
+                <Autocomplete
+                  options={(column.options || [])}
+                  size="small"
+                  getOptionLabel={(o) => o.label}
+                  onChange={(_, v) => {
+                    handleChange(index, column.dataIndex, v?.id ?? null);
+                  }}
+                  value={(column.options || []).find(o => o.id === row[column.dataIndex]) || null}
+                  isOptionEqualToValue={(a, b) => a.id === b.id}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="standard"
+                               InputProps={{...params.InputProps, disableUnderline: true}}/>
+                  )}
+                />
+              </>
+            ) : (
+              <TextField
+                variant="standard"
+                fullWidth
+                value={row[column.dataIndex] || ''}
+                InputProps={{
+                  disableUnderline: true,
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: 'none',
+                  },
+                  '& .MuiInputBase-root': {
+                    border: 'none',
+                    borderRadius: 0, // 可选：去圆角
+                  },
+                }}
+                onChange={(e) => handleChange(index, column.dataIndex, e.target.value)}
+              />
+            )
           )}
         </TableCell>
       );
@@ -107,7 +127,7 @@ const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
   const body = data.map((row, index) => createRow(row, index));
 
   return (
-    <TableContainer sx={{ maxHeight: 400, overflowY: 'auto' }}>
+    <TableContainer sx={{maxHeight: 400, overflowY: 'auto'}}>
       <Table
         sx={{
           tableLayout: 'fixed',
@@ -147,10 +167,14 @@ const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
         >
           Insert Below
         </MenuItem>
-        <MenuItem onClick={() => {}}>Move Up</MenuItem>
-        <MenuItem onClick={() => {}}>Move Down</MenuItem>
-        <MenuItem onClick={() => {}}>Duplicate</MenuItem>
-        <MenuItem onClick={() => {}} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={() => {
+        }}>Move Up</MenuItem>
+        <MenuItem onClick={() => {
+        }}>Move Down</MenuItem>
+        <MenuItem onClick={() => {
+        }}>Duplicate</MenuItem>
+        <MenuItem onClick={() => {
+        }} sx={{color: 'error.main'}}>
           Delete
         </MenuItem>
       </Menu>

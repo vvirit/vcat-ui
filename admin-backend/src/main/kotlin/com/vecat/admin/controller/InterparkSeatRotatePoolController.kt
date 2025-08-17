@@ -4,6 +4,7 @@ import com.vecat.admin.base.ResponseData
 import com.vecat.admin.constant.StatusCode
 import com.vecat.admin.entity.InterparkSeatRotatePool
 import com.vecat.admin.service.InterparkSeatRotatePoolService
+import com.vecat.admin.service.InterparkSeatRotatePoolService.InterparkSeatRotatePoolPageDTO
 import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -31,7 +32,7 @@ class InterparkSeatRotatePoolController(
     fun list(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int
-    ): Page<InterparkSeatRotatePool> {
+    ): PageView<InterparkSeatRotatePoolPageDTO> {
         val list = service.getPagedList(page, pageSize)
         return list
     }
