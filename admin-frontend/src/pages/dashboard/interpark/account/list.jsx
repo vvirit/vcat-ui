@@ -6,7 +6,10 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths.js';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
+import {
+  deleteInterparkAccount,
+  getPagedInterparkAccounts,
+} from 'src/service/interpark-account.js';
 
 import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
@@ -14,14 +17,15 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
-import {getPagedInterparkSeatRotatePools} from "../../../../service/interpark-seat-rotate-pool.js";
+import ImportForm from './import-form.jsx';
 
 let deleteId = null;
 
-const InterparkPerformList = () => {
+const InterparkAccountList = () => {
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
   const [createFormOpen, setCreateFormOpen] = useState(false);
+  const [importFormOpen, setImportFormOpen] = useState(false);
   const tableRef = useRef();
   const [editingRow, setEditingRow] = useState(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -31,24 +35,38 @@ const InterparkPerformList = () => {
       key: 'id',
       label: 'ID',
       dataIndex: 'id',
-      width: 80,
+      width: 60,
     },
     {
-      key: 'name',
-      label: 'Name',
-      dataIndex: 'name',
-      width: 160,
-    },
-    {
-      key: 'perform',
-      label: 'Perform',
-      dataIndex: 'performName',
+      key: 'email',
+      label: 'Email',
+      dataIndex: 'email',
       width: 220,
     },
     {
-      key: 'seatsCount',
-      label: 'Seats count',
-      render: (row) => row.items.length,
+      key: 'password',
+      label: 'Password',
+      dataIndex: 'password',
+      width: 220,
+    },
+    {
+      key: 'verified',
+      label: 'Verified',
+      dataIndex: 'verified',
+      width: 100,
+      render: (row) => <>{row.verified ? 'YES' : 'NO'}</>,
+    },
+    {
+      key: 'disabled',
+      label: 'Disabled',
+      dataIndex: 'disabled',
+      width: 100,
+      render: (row) => <>{row.disabled ? 'YES' : 'NO'}</>,
+    },
+    {
+      key: 'remarks',
+      label: 'Remarks',
+      dataIndex: 'remarks',
     },
     {
       key: 'actions',
@@ -84,21 +102,21 @@ const InterparkPerformList = () => {
       <CustomBreadcrumbs
         links={[
           { name: 'Dashboard', href: paths.dashboard.interpark.root },
-          { name: 'Interpark', href: paths.dashboard.interpark.performList },
-          { name: 'Seat rotate pools' },
+          { name: 'Interpark', href: paths.dashboard.interpark.accountList },
+          { name: 'Accounts' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark seat rotate pools"
+        title="Interpark accounts"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const pools = await getPagedInterparkSeatRotatePools(pagination);
-          setData(pools);
+          const performs = await getPagedInterparkAccounts(pagination);
+          setData(performs);
         }}
         actions={
           <>
@@ -108,6 +126,15 @@ const InterparkPerformList = () => {
               </Button>
             )}
             <Button
+              variant="outlined"
+              startIcon={<Iconify icon="mdi:import" />}
+              onClick={() => {
+                setImportFormOpen(true);
+              }}
+            >
+              Import
+            </Button>
+            <Button
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
               onClick={() => {
@@ -115,7 +142,7 @@ const InterparkPerformList = () => {
                 setCreateFormOpen(true);
               }}
             >
-              Add pool
+              Add account
             </Button>
           </>
         }
@@ -127,7 +154,18 @@ const InterparkPerformList = () => {
           onCancel={() => setCreateFormOpen(false)}
           onSuccess={() => {
             setCreateFormOpen(false);
-            tableRef.current.reload();
+            tableRef.current?.reload();
+          }}
+        />
+      )}
+      {importFormOpen && (
+        <ImportForm
+          data={editingRow}
+          open={importFormOpen}
+          onCancel={() => setImportFormOpen(false)}
+          onSuccess={() => {
+            setCreateFormOpen(false);
+            tableRef.current?.reload();
           }}
         />
       )}
@@ -137,11 +175,15 @@ const InterparkPerformList = () => {
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkPerform(deleteId);
-            setConfirmDeleteOpen(false);
-            tableRef.current.reload();
-          }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              await deleteInterparkAccount(deleteId);
+              setConfirmDeleteOpen(false);
+              tableRef.current?.reload();
+            }}
+          >
             Delete
           </Button>
         }
@@ -150,4 +192,4 @@ const InterparkPerformList = () => {
   );
 };
 
-export default InterparkPerformList;
+export default InterparkAccountList;

@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths.js';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
+import { getQueueRouters, deleteQueueRouter } from 'src/service/queue-router.js';
 
 import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
@@ -14,11 +14,10 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
-import {getPagedInterparkSeatRotatePools} from "../../../../service/interpark-seat-rotate-pool.js";
 
 let deleteId = null;
 
-const InterparkPerformList = () => {
+const QueueRouterList = () => {
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
   const [createFormOpen, setCreateFormOpen] = useState(false);
@@ -34,21 +33,21 @@ const InterparkPerformList = () => {
       width: 80,
     },
     {
+      key: 'type',
+      label: 'Type',
+      dataIndex: 'type',
+      width: 240,
+    },
+    {
       key: 'name',
       label: 'Name',
       dataIndex: 'name',
-      width: 160,
+      width: 240,
     },
     {
-      key: 'perform',
-      label: 'Perform',
-      dataIndex: 'performName',
-      width: 220,
-    },
-    {
-      key: 'seatsCount',
-      label: 'Seats count',
-      render: (row) => row.items.length,
+      key: 'key',
+      label: 'Key',
+      dataIndex: 'key',
     },
     {
       key: 'actions',
@@ -91,13 +90,13 @@ const InterparkPerformList = () => {
       />
       <DataTable
         ref={tableRef}
-        title="Interpark seat rotate pools"
+        title="Queue routers"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const pools = await getPagedInterparkSeatRotatePools(pagination);
+          const pools = await getQueueRouters(pagination);
           setData(pools);
         }}
         actions={
@@ -115,7 +114,7 @@ const InterparkPerformList = () => {
                 setCreateFormOpen(true);
               }}
             >
-              Add pool
+              Add router
             </Button>
           </>
         }
@@ -127,7 +126,7 @@ const InterparkPerformList = () => {
           onCancel={() => setCreateFormOpen(false)}
           onSuccess={() => {
             setCreateFormOpen(false);
-            tableRef.current.reload();
+            tableRef.current?.reload();
           }}
         />
       )}
@@ -137,11 +136,15 @@ const InterparkPerformList = () => {
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkPerform(deleteId);
-            setConfirmDeleteOpen(false);
-            tableRef.current.reload();
-          }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              await deleteQueueRouter(deleteId);
+              setConfirmDeleteOpen(false);
+              tableRef.current?.reload();
+            }}
+          >
             Delete
           </Button>
         }
@@ -150,4 +153,4 @@ const InterparkPerformList = () => {
   );
 };
 
-export default InterparkPerformList;
+export default QueueRouterList;

@@ -13,3 +13,8 @@ export async function getPagedProxies(page) {
   const response = await axios.get(`/api/proxy?page=${page.page}&pageSize=${page.pageSize}`);
   return response.data;
 }
+
+export async function getAllProxies() {
+  const response = await axios.get(`/api/proxy/all`);
+  return response.data;
+}

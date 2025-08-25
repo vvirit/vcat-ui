@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths.js';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
+import { deleteInterparkPerform, getPagedInterparkPerforms } from 'src/service/interpark-perform.js';
 
 import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
@@ -14,7 +14,6 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
-import {getPagedInterparkSeatRotatePools} from "../../../../service/interpark-seat-rotate-pool.js";
 
 let deleteId = null;
 
@@ -40,15 +39,26 @@ const InterparkPerformList = () => {
       width: 160,
     },
     {
-      key: 'perform',
-      label: 'Perform',
-      dataIndex: 'performName',
-      width: 220,
+      key: 'performCode',
+      label: 'Perform code',
+      dataIndex: 'performCode',
+      width: 130,
     },
     {
-      key: 'seatsCount',
-      label: 'Seats count',
-      render: (row) => row.items.length,
+      key: 'placeCode',
+      label: 'Place code',
+      dataIndex: 'placeCode',
+      width: 120,
+    },
+    {
+      key: 'rounds',
+      label: 'rounds',
+      render: (row) => row.rounds.map((it) => `${it.date}-${it.time}`).join(','),
+    },
+    {
+      key: 'blocks',
+      label: 'Blocks',
+      render: (row) => row.blocks.map((it) => it.name).join(','),
     },
     {
       key: 'actions',
@@ -85,20 +95,20 @@ const InterparkPerformList = () => {
         links={[
           { name: 'Dashboard', href: paths.dashboard.interpark.root },
           { name: 'Interpark', href: paths.dashboard.interpark.performList },
-          { name: 'Seat rotate pools' },
+          { name: 'Performs' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark seat rotate pools"
+        title="Interpark performs"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const pools = await getPagedInterparkSeatRotatePools(pagination);
-          setData(pools);
+          const performs = await getPagedInterparkPerforms(pagination);
+          setData(performs);
         }}
         actions={
           <>
@@ -115,7 +125,7 @@ const InterparkPerformList = () => {
                 setCreateFormOpen(true);
               }}
             >
-              Add pool
+              Add perform
             </Button>
           </>
         }

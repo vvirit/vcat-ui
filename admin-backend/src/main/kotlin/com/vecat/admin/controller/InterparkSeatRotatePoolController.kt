@@ -2,6 +2,7 @@ package com.vecat.admin.controller
 
 import com.vecat.admin.base.ResponseData
 import com.vecat.admin.constant.StatusCode
+import com.vecat.admin.entity.InterparkPerform
 import com.vecat.admin.entity.InterparkSeatRotatePool
 import com.vecat.admin.service.InterparkSeatRotatePoolService
 import com.vecat.admin.service.InterparkSeatRotatePoolService.InterparkSeatRotatePoolPageDTO
@@ -28,8 +29,13 @@ class InterparkSeatRotatePoolController(
     val service: InterparkSeatRotatePoolService,
 ) {
 
+    @GetMapping("/all")
+    fun allList(): List<InterparkSeatRotatePoolPageDTO> {
+        return service.getAll()
+    }
+
     @GetMapping
-    fun list(
+    fun getPagedList(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int
     ): PageView<InterparkSeatRotatePoolPageDTO> {
@@ -53,5 +59,10 @@ class InterparkSeatRotatePoolController(
     fun update(@RequestBody dto: InterparkSeatRotatePoolService.UpdatePoolDTO): ResponseData<Unit> {
         service.updatePool(dto)
         return ResponseData(code = StatusCode.SUCCESS)
+    }
+
+    @GetMapping("/list")
+    fun getAll(): List<InterparkSeatRotatePoolPageDTO> {
+        return service.getAll()
     }
 }

@@ -1,6 +1,7 @@
 package com.vecat.admin.service
 
 import com.vecat.admin.controller.PageView
+import com.vecat.admin.entity.InterparkPerform
 import com.vecat.admin.entity.InterparkSeatRotatePool
 import com.vecat.admin.entity.InterparkSeatRotatePoolItem
 import com.vecat.admin.repository.InterparkPerformRepository
@@ -131,25 +132,32 @@ class InterparkSeatRotatePoolService(
     fun getPagedList(page: Int, size: Int): PageView<InterparkSeatRotatePoolPageDTO> {
         val pageable = PageRequest.of(page, size)
         val entityPage = poolRepository.findAll(pageable)
-        val list = entityPage.content.map { pool ->
-            InterparkSeatRotatePoolPageDTO(
-                pool.id!!,
-                pool.name,
-                pool.perform.id!!,
-                pool.perform.name,
-                pool.items.map { item ->
-                    InterparkSeatRotatePoolPageDTOItem(
-                        item.round.id!!,
-                        item.block.id!!,
-                        item.seatGrade,
-                        item.seatGradeName,
-                        item.floor,
-                        item.rowNo,
-                        item.seatNo,
-                    )
-                }
-            )
-        }
+        val list = entityPage.content.map(this::mapToDTO)
         return PageView(list, page, size, entityPage.totalElements)
     }
+
+  @Transactional
+  fun getAll(): List<InterparkSeatRotatePoolPageDTO> {
+    return poolRepository.findAll().map(this::mapToDTO)
+  }
+
+  private fun mapToDTO(pool: InterparkSeatRotatePool): InterparkSeatRotatePoolPageDTO {
+    return InterparkSeatRotatePoolPageDTO(
+      pool.id!!,
+      pool.name,
+      pool.perform.id!!,
+      pool.perform.name,
+      pool.items.map { item ->
+        InterparkSeatRotatePoolPageDTOItem(
+          item.round.id!!,
+          item.block.id!!,
+          item.seatGrade,
+          item.seatGradeName,
+          item.floor,
+          item.rowNo,
+          item.seatNo,
+        )
+      }
+    )
+  }
 }

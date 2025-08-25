@@ -14,11 +14,14 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
-import {getPagedInterparkSeatRotatePools} from "../../../../service/interpark-seat-rotate-pool.js";
+import {
+  deleteInterparkAccountGroup,
+  getPagedInterparkAccountGroups,
+} from '../../../../service/interpark-account-group.js';
 
 let deleteId = null;
 
-const InterparkPerformList = () => {
+const InterparkAccountGroupList = () => {
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
   const [createFormOpen, setCreateFormOpen] = useState(false);
@@ -37,18 +40,18 @@ const InterparkPerformList = () => {
       key: 'name',
       label: 'Name',
       dataIndex: 'name',
-      width: 160,
+      width: 180,
     },
     {
-      key: 'perform',
-      label: 'Perform',
-      dataIndex: 'performName',
-      width: 220,
+      key: 'condition',
+      label: 'Condition',
+      dataIndex: 'condition',
+      width: 400,
     },
     {
-      key: 'seatsCount',
-      label: 'Seats count',
-      render: (row) => row.items.length,
+      key: 'remarks',
+      label: 'Remarks',
+      dataIndex: 'remarks',
     },
     {
       key: 'actions',
@@ -84,21 +87,21 @@ const InterparkPerformList = () => {
       <CustomBreadcrumbs
         links={[
           { name: 'Dashboard', href: paths.dashboard.interpark.root },
-          { name: 'Interpark', href: paths.dashboard.interpark.performList },
-          { name: 'Seat rotate pools' },
+          { name: 'Interpark', href: paths.dashboard.interpark.accountGroupList },
+          { name: 'Account groups' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark seat rotate pools"
+        title="Interpark account groups"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const pools = await getPagedInterparkSeatRotatePools(pagination);
-          setData(pools);
+          const performs = await getPagedInterparkAccountGroups(pagination);
+          setData(performs);
         }}
         actions={
           <>
@@ -115,7 +118,7 @@ const InterparkPerformList = () => {
                 setCreateFormOpen(true);
               }}
             >
-              Add pool
+              Add group
             </Button>
           </>
         }
@@ -138,9 +141,9 @@ const InterparkPerformList = () => {
         content="Are you sure want to delete?"
         action={
           <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkPerform(deleteId);
+            await deleteInterparkAccountGroup(deleteId);
             setConfirmDeleteOpen(false);
-            tableRef.current.reload();
+            tableRef.current?.reload();
           }}>
             Delete
           </Button>
@@ -150,4 +153,4 @@ const InterparkPerformList = () => {
   );
 };
 
-export default InterparkPerformList;
+export default InterparkAccountGroupList;

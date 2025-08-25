@@ -115,10 +115,10 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
           )}
 
           {/** @slot Workspace popover */}
-          <WorkspacesPopover
-            data={_workspaces}
-            sx={{ ...(isNavHorizontal && { color: 'var(--layout-nav-text-primary-color)' }) }}
-          />
+          {/*<WorkspacesPopover*/}
+          {/*  data={_workspaces}*/}
+          {/*  sx={{ ...(isNavHorizontal && { color: 'var(--layout-nav-text-primary-color)' }) }}*/}
+          {/*/>*/}
         </>
       ),
       rightArea: (

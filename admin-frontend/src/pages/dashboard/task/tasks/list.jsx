@@ -6,15 +6,14 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths.js';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
+import { deleteTask, getPageTasks } from 'src/service/task.js';
 
 import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
-import CreateForm from './form.jsx';
-import {getPagedInterparkSeatRotatePools} from "../../../../service/interpark-seat-rotate-pool.js";
+import { CreateForm } from './form.jsx';
 
 let deleteId = null;
 
@@ -34,21 +33,21 @@ const InterparkPerformList = () => {
       width: 80,
     },
     {
-      key: 'name',
-      label: 'Name',
-      dataIndex: 'name',
-      width: 160,
+      key: 'category',
+      label: 'Category',
+      dataIndex: 'category',
+      width: 140,
     },
     {
-      key: 'perform',
-      label: 'Perform',
-      dataIndex: 'performName',
-      width: 220,
+      key: 'task',
+      label: 'Task',
+      dataIndex: 'taskType',
+      width: 140,
     },
     {
-      key: 'seatsCount',
-      label: 'Seats count',
-      render: (row) => row.items.length,
+      key: 'remarks',
+      label: 'Remarks',
+      dataIndex: 'remarks',
     },
     {
       key: 'actions',
@@ -91,13 +90,13 @@ const InterparkPerformList = () => {
       />
       <DataTable
         ref={tableRef}
-        title="Interpark seat rotate pools"
+        title="Interpark tasks"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const pools = await getPagedInterparkSeatRotatePools(pagination);
+          const pools = await getPageTasks(pagination);
           setData(pools);
         }}
         actions={
@@ -115,7 +114,7 @@ const InterparkPerformList = () => {
                 setCreateFormOpen(true);
               }}
             >
-              Add pool
+              Add task
             </Button>
           </>
         }
@@ -137,11 +136,15 @@ const InterparkPerformList = () => {
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkPerform(deleteId);
-            setConfirmDeleteOpen(false);
-            tableRef.current.reload();
-          }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              await deleteTask(deleteId);
+              setConfirmDeleteOpen(false);
+              tableRef.current.reload();
+            }}
+          >
             Delete
           </Button>
         }

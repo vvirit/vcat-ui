@@ -22,3 +22,8 @@ export async function updateInterparkSeatRotatePool(pool) {
   }
   return data;
 }
+
+export async function getAllInterparkSeatRotatePools() {
+  const response = await axios.get(`/api/interpark-seat-rotate-pool/all`);
+  return response.data;
+}

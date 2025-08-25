@@ -59,11 +59,16 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/task`,
       nodeList: `${ROOTS.DASHBOARD}/task/node-list`,
       taskList: `${ROOTS.DASHBOARD}/task/task-list`,
+      queueRouterList: `${ROOTS.DASHBOARD}/task/queue-router-list`,
     },
     interpark: {
       root: `${ROOTS.DASHBOARD}/interpark`,
       performList: `${ROOTS.DASHBOARD}/interpark/perform-list`,
+      preOrderList: `${ROOTS.DASHBOARD}/interpark/pre-order-list`,
+      orderList: `${ROOTS.DASHBOARD}/interpark/order-list`,
       seatRotatePoolList: `${ROOTS.DASHBOARD}/interpark/seat-rotate-pool-list`,
+      accountList: `${ROOTS.DASHBOARD}/interpark/account-list`,
+      accountGroupList: `${ROOTS.DASHBOARD}/interpark/account-group-list`,
     },
   },
 };

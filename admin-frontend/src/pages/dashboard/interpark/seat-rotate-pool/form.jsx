@@ -6,17 +6,17 @@ import Alert from '@mui/material/Alert';
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Autocomplete from "@mui/material/Autocomplete";
 import {DialogActions, DialogContent, DialogTitle, Grid} from '@mui/material';
 
 import {getAllPerforms} from 'src/service/interpark-perform.js';
-
-import TabPanel from 'src/components/tab-panel/index.jsx';
-import EditTable from 'src/components/edit-table/index.jsx';
-import Autocomplete from "@mui/material/Autocomplete";
 import {
   addInterparkSeatRotatePool,
   updateInterparkSeatRotatePool
 } from "src/service/interpark-seat-rotate-pool.js";
+
+import TabPanel from 'src/components/tab-panel/index.jsx';
+import EditTable from 'src/components/edit-table/index.jsx';
 
 export default function CreateForm({open, onCancel, onSuccess, data}) {
 
@@ -68,12 +68,10 @@ export default function CreateForm({open, onCancel, onSuccess, data}) {
       dataIndex: 'blockId',
       width: 130,
       type: 'autocomplete',
-      options: currentPerform?.blocks?.map(r => (
-        {
-          id: r.id,
-          label: r.name,
-        }
-      ) || []),
+      options: currentPerform?.blocks?.map(r => ({
+        id: r.id,
+        label: r.name,
+      })),
     },
     {
       key: 'seatGrade',

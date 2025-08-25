@@ -3,8 +3,8 @@ import {useState, useImperativeHandle, forwardRef} from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
-import {Table, TableRow, TableBody, TableCell, TableHead, TableContainer} from '@mui/material'
 import Autocomplete from "@mui/material/Autocomplete";
+import {Table, TableRow, TableBody, TableCell, TableHead, TableContainer} from '@mui/material'
 
 const EditTable = forwardRef(({columns, initialData, sx}, ref) => {
 

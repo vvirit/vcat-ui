@@ -60,6 +60,7 @@ export const navData = [
         children: [
           { title: 'Nodes', path: paths.dashboard.task.nodeList },
           { title: 'Tasks', path: paths.dashboard.task.taskList },
+          { title: 'Queue routers', path: paths.dashboard.task.queueRouterList },
         ],
       },
       {
@@ -80,21 +81,25 @@ export const navData = [
         path: paths.dashboard.interpark.root,
         children: [
           { title: 'Performs', path: paths.dashboard.interpark.performList },
+          { title: 'Orders', path: paths.dashboard.interpark.orderList },
+          { title: 'Lock only orders', path: paths.dashboard.interpark.preOrderList },
           { title: 'Seat rotate pools', path: paths.dashboard.interpark.seatRotatePoolList },
+          { title: 'Accounts', path: paths.dashboard.interpark.accountList },
+          { title: 'Account groups', path: paths.dashboard.interpark.accountGroupList },
         ],
       },
-      {
-        title: 'Melon',
-        path: 'melon',
-        children: [
-        ],
-      },
-      {
-        title: 'Yes24',
-        path: 'yes24',
-        children: [
-        ],
-      },
+      // {
+      //   title: 'Melon',
+      //   path: 'melon',
+      //   children: [
+      //   ],
+      // },
+      // {
+      //   title: 'Yes24',
+      //   path: 'yes24',
+      //   children: [
+      //   ],
+      // },
     ],
   },
 ];

@@ -6,13 +6,12 @@ import com.vecat.admin.entity.InterparkPerformBlock
 import com.vecat.admin.entity.InterparkPerformRound
 import com.vecat.admin.repository.InterparkPerformRepository
 import jakarta.transaction.Transactional
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
-class InterparkPerformService(@Autowired val repository: InterparkPerformRepository) {
+class InterparkPerformService(val repository: InterparkPerformRepository) {
 
     @Transactional
     fun allPerforms(): List<InterparkPerform> {
