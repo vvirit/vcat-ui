@@ -21,13 +21,22 @@ const PageSix = lazy(() => import('src/pages/dashboard/six'));
 const NodeListPage = lazy(() => import('src/pages/dashboard/task/node/list.jsx'));
 const TaskListPage = lazy(() => import('src/pages/dashboard/task/tasks/list.jsx'));
 const InterparkPerformListPage = lazy(() => import('src/pages/dashboard/interpark/perform/list'));
-const InterparkSeatRotatePoolListPage = lazy(() => import('src/pages/dashboard/interpark/seat-rotate-pool/list'));
-const InterparkPreOrderListPage = lazy(() => import('src/pages/dashboard/interpark/pre-order/list'));
+const InterparkSeatRotatePoolListPage = lazy(
+  () => import('src/pages/dashboard/interpark/seat-rotate-pool/list')
+);
+const InterparkPreOrderListPage = lazy(
+  () => import('src/pages/dashboard/interpark/pre-order/list')
+);
 const InterparkOrderListPage = lazy(() => import('src/pages/dashboard/interpark/order/list'));
-const InterparkAccountListPage = lazy(() => import('src/pages/dashboard/interpark/account/list.jsx'));
-const InterparkAccountGroupListPage = lazy(() => import('src/pages/dashboard/interpark/account-group/list.jsx'));
+const InterparkAccountListPage = lazy(
+  () => import('src/pages/dashboard/interpark/account/list.jsx')
+);
+const InterparkAccountGroupListPage = lazy(
+  () => import('src/pages/dashboard/interpark/account-group/list.jsx')
+);
 const ProxyListPage = lazy(() => import('src/pages/dashboard/config/proxy/list'));
 const QueueRouterListPage = lazy(() => import('src/pages/dashboard/task/queue-routers/list.jsx'));
+const TaskInstanceListPage = lazy(() => import('src/pages/dashboard/task/task-instance/list.jsx'));
 
 // ----------------------------------------------------------------------
 
@@ -67,6 +76,7 @@ export const dashboardRoutes = [
         children: [
           { path: 'node-list', element: <NodeListPage /> },
           { path: 'task-list', element: <TaskListPage /> },
+          { path: 'task-instance-list', element: <TaskInstanceListPage /> },
           { path: 'queue-router-list', element: <QueueRouterListPage /> },
         ],
       },

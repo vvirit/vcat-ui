@@ -6,10 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths.js';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import {
-  deleteInterparkAccountGroup,
-  getPagedInterparkAccountGroups,
-} from 'src/service/interpark-account-group.js';
+import { deleteInterparkPerform, getPagedInterparkPerforms } from 'src/service/interpark-perform.js';
 
 import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
@@ -20,7 +17,7 @@ import CreateForm from './form.jsx';
 
 let deleteId = null;
 
-const InterparkAccountGroupList = () => {
+const TaskInstanceList = () => {
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
   const [createFormOpen, setCreateFormOpen] = useState(false);
@@ -39,18 +36,29 @@ const InterparkAccountGroupList = () => {
       key: 'name',
       label: 'Name',
       dataIndex: 'name',
-      width: 180,
+      width: 160,
     },
     {
-      key: 'condition',
-      label: 'Condition',
-      dataIndex: 'condition',
-      width: 400,
+      key: 'performCode',
+      label: 'Perform code',
+      dataIndex: 'performCode',
+      width: 130,
     },
     {
-      key: 'remarks',
-      label: 'Remarks',
-      dataIndex: 'remarks',
+      key: 'placeCode',
+      label: 'Place code',
+      dataIndex: 'placeCode',
+      width: 120,
+    },
+    {
+      key: 'rounds',
+      label: 'rounds',
+      render: (row) => row.rounds.map((it) => `${it.date}-${it.time}`).join(','),
+    },
+    {
+      key: 'blocks',
+      label: 'Blocks',
+      render: (row) => row.blocks.map((it) => it.name).join(','),
     },
     {
       key: 'actions',
@@ -86,20 +94,20 @@ const InterparkAccountGroupList = () => {
       <CustomBreadcrumbs
         links={[
           { name: 'Dashboard', href: paths.dashboard.interpark.root },
-          { name: 'Interpark', href: paths.dashboard.interpark.accountGroupList },
-          { name: 'Account groups' },
+          { name: 'Interpark', href: paths.dashboard.interpark.performList },
+          { name: 'Performs' },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark account groups"
+        title="Interpark performs"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const performs = await getPagedInterparkAccountGroups(pagination);
+          const performs = await getPagedInterparkPerforms(pagination);
           setData(performs);
         }}
         actions={
@@ -117,7 +125,7 @@ const InterparkAccountGroupList = () => {
                 setCreateFormOpen(true);
               }}
             >
-              Add group
+              Add perform
             </Button>
           </>
         }
@@ -140,9 +148,9 @@ const InterparkAccountGroupList = () => {
         content="Are you sure want to delete?"
         action={
           <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkAccountGroup(deleteId);
+            await deleteInterparkPerform(deleteId);
             setConfirmDeleteOpen(false);
-            tableRef.current?.reload();
+            tableRef.current.reload();
           }}>
             Delete
           </Button>
@@ -152,4 +160,4 @@ const InterparkAccountGroupList = () => {
   );
 };
 
-export default InterparkAccountGroupList;
+export default TaskInstanceList;

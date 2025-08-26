@@ -31,7 +31,6 @@ class TaskService(
             taskType = dto.taskType,
             name = dto.name,
             remarks = dto.remarks,
-            interparkBookingTask = interparkTaskService.toInterparkBookingTask(dto.interparkBookingTask)
         )
         repository.save(task)
     }
@@ -53,7 +52,6 @@ class TaskService(
             taskType = dto.taskType
             name = dto.name
             remarks = dto.remarks
-            interparkBookingTask = interparkTaskService.toInterparkBookingTask(dto.interparkBookingTask)
         }
         repository.save(task)
     }

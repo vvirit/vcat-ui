@@ -60,6 +60,7 @@ export const navData = [
         children: [
           { title: 'Nodes', path: paths.dashboard.task.nodeList },
           { title: 'Tasks', path: paths.dashboard.task.taskList },
+          { title: 'Tasks instance', path: paths.dashboard.task.taskInstanceList },
           { title: 'Queue routers', path: paths.dashboard.task.queueRouterList },
         ],
       },

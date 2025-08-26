@@ -1,6 +1,5 @@
 package com.vecat.admin.service
 
-import com.vecat.admin.entity.InterparkBookingTask
 import com.vecat.admin.repository.InterparkPerformRepository
 import com.vecat.admin.repository.InterparkSeatRotatePoolRepository
 import com.vecat.admin.repository.ProxyRepository
@@ -24,18 +23,4 @@ class InterparkTaskService(
         val requestInterval: Int,
         val rotatePoolId: Long,
     )
-
-    fun toInterparkBookingTask(dto: InterparkBookingTaskDTO?): InterparkBookingTask? {
-        if (dto == null) {
-            return null
-        }
-        return InterparkBookingTask(
-            proxy = proxyRepository.findById(dto.proxyId).get(),
-            perform = interparkPerformRepository.findById(dto.performId).get(),
-            router = queueRouterRepository.findById(dto.routerId).get(),
-            concurrency = dto.concurrency,
-            requestInterval = dto.requestInterval,
-            rotatePool = interparkSeatRotatePoolRepository.findById(dto.rotatePoolId).get(),
-        )
-    }
 }

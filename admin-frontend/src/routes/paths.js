@@ -59,6 +59,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/task`,
       nodeList: `${ROOTS.DASHBOARD}/task/node-list`,
       taskList: `${ROOTS.DASHBOARD}/task/task-list`,
+      taskInstanceList: `${ROOTS.DASHBOARD}/task/task-instance-list`,
       queueRouterList: `${ROOTS.DASHBOARD}/task/queue-router-list`,
     },
     interpark: {

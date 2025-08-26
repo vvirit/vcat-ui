@@ -48,7 +48,7 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
     getValues,
   } = useForm({ defaultValues: data });
 
-  const taskArgumentForm = useForm({defaultValues});
+  const taskArgumentForm = useForm();
 
   const onSave = async () => {
     const [mainFormOk, argumentFormOk] = await Promise.all([trigger(), taskArgumentForm.trigger()]);

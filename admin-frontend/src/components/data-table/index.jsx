@@ -36,6 +36,7 @@ const DataTable = forwardRef(
       enableCheck = false,
       onCheck = (rows) => {},
       cellSx = {},
+      enablePage = true,
     },
     ref
   ) => {
@@ -158,25 +159,30 @@ const DataTable = forwardRef(
             {itemList.length === 0 && (
               <EmptyContent sx={{ width: '100%', marginTop: '60px', marginBottom: '60px' }} />
             )}
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <TablePagination
-                component="div"
-                rowsPerPageOptions={[10, 20, 50, 100]}
-                count={data.totalElements}
-                page={page}
-                rowsPerPage={pageSize}
-                onPageChange={(e, value) => {
-                  setPage(value);
-                  onFetchData({ page: value, pageSize });
-                }}
-                onRowsPerPageChange={(e) => {
-                  const value = parseInt(e.target.value, 10);
-                  setPageSize(value);
-                  setPage(0);
-                  onFetchData({ page: 0, pageSize: value });
-                }}
-              />
-            </div>
+            {
+              enablePage && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <TablePagination
+                    component="div"
+                    rowsPerPageOptions={[10, 20, 50, 100]}
+                    count={data.totalElements}
+                    page={page}
+                    rowsPerPage={pageSize}
+                    onPageChange={(e, value) => {
+                      setPage(value);
+                      onFetchData({ page: value, pageSize });
+                    }}
+                    onRowsPerPageChange={(e) => {
+                      const value = parseInt(e.target.value, 10);
+                      setPageSize(value);
+                      setPage(0);
+                      onFetchData({ page: 0, pageSize: value });
+                    }}
+                  />
+                </div>
+              )
+            }
+
           </TableContainer>
         </Card>
       </>

@@ -1,0 +1,10 @@
+POST http://localhost:8080/api/task-instance/execute-task
+Content-Type: application/json
+
+{
+  "nodeId": "e19a335f-5008-4ab7-bcd0-349881dff552",
+  "name": "test",
+  "taskName": "common/test",
+  "argument": "{}",
+  "remarks": "this is test task"
+}

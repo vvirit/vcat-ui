@@ -33,8 +33,4 @@ data class Task(
 
     @Column(nullable = true, length = 64)
     var remarks: String,
-
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "interpark_booking_task_id", nullable = true)
-    var interparkBookingTask: InterparkBookingTask? = null,
 ) : BaseEntity()
