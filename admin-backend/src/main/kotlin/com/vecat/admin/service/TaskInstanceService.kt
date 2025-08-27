@@ -6,6 +6,7 @@ import com.vecat.admin.entity.TaskInstance
 import com.vecat.admin.entity.TaskInstanceStatus
 import com.vecat.admin.repository.TaskInstanceRepository
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,41 +18,34 @@ class TaskInstanceService(
     val objectMapper: ObjectMapper,
 ) {
 
-    data class ExecuteTaskDTO(
-        val nodeId: String,
-        val name: String,
-        val taskName: String,
-        val argument: String,
-        val remarks: String = "",
-    ) {
-        var instanceId: String? = null
-    }
-
-    data class DispatchedData(
-        val action: String,
-        val data: String,
+    data class UpdateTaskInstanceDTO(
+        val taskId: String,
+        val info: String? = null,
+        val status: TaskInstanceStatus? = null,
+        val errorMessage: String? = null,
     )
 
     @Transactional
-    fun execute(dto: ExecuteTaskDTO) {
-        val taskInstance = TaskInstance(
-            name = dto.name,
-            taskName = dto.taskName,
-            argument = dto.argument,
-            remarks = dto.remarks,
-            status = TaskInstanceStatus.CREATED,
-        )
-        val saved = repository.save(taskInstance)
-        dto.instanceId = "instance-${saved.id}"
-        val channelName = "scheduler:node:dispatch:${dto.nodeId}"
-        val dispatchedData = DispatchedData(
-            action = "run-task",
-            data = objectMapper.writeValueAsString(dto)
-        )
-        redisTemplate.convertAndSend(channelName, objectMapper.writeValueAsString(dispatchedData))
+    fun updateTaskInstance(dto: UpdateTaskInstanceDTO) {
+        val id = dto.taskId.replace("task-", "").toLong()
+        val taskInstance = repository.findById(id).get()
+        taskInstance.apply {
+            if (!dto.info.isNullOrBlank()) {
+                this.information = dto.info
+            }
+            if (dto.status != null) {
+                this.status = dto.status
+            }
+            if (!dto.errorMessage.isNullOrBlank()) {
+                this.errorMessage = dto.errorMessage
+            }
+        }
+        repository.save(taskInstance)
     }
 
     data class QueryTaskInstancePageDTO(
+        val id: Long,
+        val nodeId: String,
         val name: String,
         val taskName: String,
         val remarks: String,
@@ -63,10 +57,13 @@ class TaskInstanceService(
 
     @Transactional
     fun getPagedList(page: Int, size: Int): PageView<QueryTaskInstancePageDTO> {
-        val pageable = PageRequest.of(page, size)
+        val sort = Sort.by(TaskInstance::id.name).descending()
+        val pageable = PageRequest.of(page, size, sort)
         val entityPage = repository.findAll(pageable)
         val list = entityPage.content.map { entity ->
             QueryTaskInstancePageDTO(
+                id = entity.id!!,
+                nodeId = entity.nodeId,
                 name = entity.name,
                 taskName = entity.taskName,
                 remarks = entity.remarks,
@@ -81,5 +78,40 @@ class TaskInstanceService(
 
     fun deleteById(id: Long) {
         repository.deleteById(id)
+    }
+
+    @Transactional
+    fun takeTask(nodeId: String): TaskInstance? {
+        val taskInstance = repository.findFirstByNodeIdAndStatus(nodeId, TaskInstanceStatus.CREATED) ?: return null
+        taskInstance.status = TaskInstanceStatus.DISPATCHED
+        repository.save(taskInstance)
+        return taskInstance
+    }
+
+    data class TaskInstanceDTO(
+        val id: Long,
+        val nodeId: String,
+        val name: String,
+        val taskName: String,
+        val remarks: String,
+        val status: TaskInstanceStatus,
+        val argument: String,
+        val information: String,
+        val errorMessage: String,
+    )
+
+    fun getById(id: Long): TaskInstanceDTO {
+        val instance = repository.findById(id).get()
+        return TaskInstanceDTO(
+            id = instance.id!!,
+            nodeId = instance.nodeId,
+            name = instance.name,
+            taskName = instance.taskName,
+            remarks = instance.remarks,
+            status = instance.status,
+            argument = instance.argument,
+            information = instance.information ?: "",
+            errorMessage = instance.errorMessage ?: "",
+        )
     }
 }

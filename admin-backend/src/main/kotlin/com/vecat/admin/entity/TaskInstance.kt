@@ -6,6 +6,7 @@ import jakarta.persistence.*
 
 enum class TaskInstanceStatus {
     CREATED,
+    DISPATCHED,
     RUNNING,
     FINISHED,
     FAILED,
@@ -14,6 +15,9 @@ enum class TaskInstanceStatus {
 @Entity
 @Table(name = "t_task_instance")
 data class TaskInstance(
+
+    @Column(length = 64)
+    var nodeId: String,
 
     @Column(nullable = false, length = 32)
     var name: String,
