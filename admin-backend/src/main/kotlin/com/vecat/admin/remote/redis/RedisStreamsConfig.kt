@@ -63,6 +63,7 @@ class RedisStreamsConfig(
             val action = map["action"]!!
             val payload = map["payload"]!!
             remoteMessageHandler.onReceiveData(nodeId, ServerAction.valueOf(action), payload)
+            ops.delete(STREAM_KEY, msg.id)
         }
         container.start()
         return container

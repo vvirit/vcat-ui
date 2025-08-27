@@ -1,12 +1,15 @@
 package com.vecat.admin.remote
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.vecat.admin.service.TaskInstanceService
+import com.vecat.admin.service.TaskInstanceService.UpdateTaskInstanceDTO
+import com.vecat.admin.service.TaskService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 enum class ServerAction {
     INIT,
-    HEART_BEAT,
+    UPDATE_TASK,
 }
 
 /**
@@ -18,7 +21,7 @@ enum class ServerAction {
 @Component
 class DefaultReceiveRemoteMessageHandler(
     val objectMapper: ObjectMapper,
-    val nodeService: NodeService,
+    val taskInstanceService: TaskInstanceService,
 ): RemoteMessageHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -28,7 +31,7 @@ class DefaultReceiveRemoteMessageHandler(
             ServerAction.INIT -> {
                 logger.info("received init stream key message, ignored")
             }
-            ServerAction.HEART_BEAT -> handleHeartBeat(nodeId, payload)
+            ServerAction.UPDATE_TASK -> handleUpdateTask(nodeId, payload)
         }
     }
 
@@ -42,13 +45,8 @@ class DefaultReceiveRemoteMessageHandler(
     /**
      * 处理任务节点心跳，维持在线状态
      */
-    private fun handleHeartBeat(nodeId: String, payload: String) {
-        val message = objectMapper.readValue(payload, HeartBeatMessage::class.java)
-        nodeService.updateNode(NodeService.NodeInfo(
-            id = nodeId,
-            startTime = message.startTime,
-            version = message.version,
-            versionNo = message.versionNo,
-        ))
+    private fun handleUpdateTask(nodeId: String, payload: String) {
+        val dto = objectMapper.readValue(payload, UpdateTaskInstanceDTO::class.java)
+        taskInstanceService.updateTaskInstance(dto)
     }
 }

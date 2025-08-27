@@ -35,6 +35,6 @@ class RedisRemoteService(
     }
 
     private fun getDispatchStreamKey(nodeId: String): String {
-        return "dispatch:$nodeId"
+        return "node:stream:$nodeId"
     }
 }

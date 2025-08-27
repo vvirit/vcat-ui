@@ -1,28 +1,26 @@
 package com.vecat.admin.remote
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.vecat.admin.entity.TaskInstance
 import com.vecat.admin.entity.TaskInstanceStatus
 import com.vecat.admin.repository.TaskInstanceRepository
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.concurrent.TimeUnit
 
 @Service
 class NodeService(
     private val taskInstanceRepository: TaskInstanceRepository,
     private val remoteService: RemoteService,
+    private val redisTemplate: StringRedisTemplate,
+    private val objectMapper: ObjectMapper,
 ) {
-
-    val nodes: Cache<String, NodeInfo> = Caffeine.newBuilder()
-        .expireAfterWrite(10, TimeUnit.SECONDS)
-        .maximumSize(1000)
-        .build<String, NodeInfo>()
 
     data class NodeInfo(
         val id: String,
@@ -36,12 +34,14 @@ class NodeService(
     }
 
     fun getAllNodes(): List<NodeInfo> {
-        nodes.cleanUp()
-        return nodes.asMap().values.toList()
+        val nodes = redisTemplate.opsForSet().members("nodes")?.toList() ?: return emptyList()
+        val nodesInfo = redisTemplate.opsForValue().multiGet(nodes) ?: return emptyList()
+        return nodesInfo.filter { !it.isNullOrBlank() }.map {
+            objectMapper.readValue(it, NodeInfo::class.java)
+        }
     }
 
     fun updateNode(nodeInfo: NodeInfo) {
-        nodes.put(nodeInfo.id, nodeInfo)
     }
 
     data class DispatchTaskDTO(
@@ -50,7 +50,7 @@ class NodeService(
         val taskName: String,
         val argument: String,
         val remarks: String = "",
-        var instanceId: String? = null
+        var instanceId: String = "",
     )
 
     /**
@@ -66,8 +66,8 @@ class NodeService(
             remarks = dto.remarks,
             status = TaskInstanceStatus.CREATED,
         )
-        taskInstanceRepository.save(taskInstance)
-        dto.instanceId = taskInstance.id.toString()
-        remoteService.sendRemote(dto.nodeId, RemoteAction.RUN_TASK, taskInstance)
+        val saved = taskInstanceRepository.save(taskInstance)
+        dto.instanceId = saved.id.toString()
+        remoteService.sendRemote(dto.nodeId, RemoteAction.RUN_TASK, dto)
     }
 }
