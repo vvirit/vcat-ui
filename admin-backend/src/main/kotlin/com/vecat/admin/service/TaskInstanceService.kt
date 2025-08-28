@@ -3,6 +3,7 @@ package com.vecat.admin.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.vecat.admin.controller.PageView
 import com.vecat.admin.entity.TaskInstance
+import com.vecat.admin.entity.TaskInstanceResultItem
 import com.vecat.admin.entity.TaskInstanceStatus
 import com.vecat.admin.repository.TaskInstanceRepository
 import org.springframework.data.domain.PageRequest
@@ -113,5 +114,24 @@ class TaskInstanceService(
             information = instance.information ?: "",
             errorMessage = instance.errorMessage ?: "",
         )
+    }
+
+    data class AppendTaskResultDTO(
+        val instanceId: Long,
+        val data: String,
+        val errorMessage: String = "",
+    )
+
+    @Transactional
+    fun appendTaskResult(dto: AppendTaskResultDTO) {
+        val taskInstance = repository.findById(dto.instanceId).get()
+        taskInstance.resultItems.add(
+            TaskInstanceResultItem(
+                instance = taskInstance,
+                data = dto.data,
+                errorMessage = dto.errorMessage,
+            )
+        )
+        repository.save(taskInstance)
     }
 }
