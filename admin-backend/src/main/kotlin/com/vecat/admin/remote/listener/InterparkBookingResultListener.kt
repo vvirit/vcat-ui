@@ -3,6 +3,7 @@ package com.vecat.admin.remote.listener
 import com.vecat.admin.remote.TaskResultListener
 import com.vecat.admin.service.InterparkAccountService
 import org.springframework.stereotype.Component
+import kotlin.reflect.KClass
 
 data class InterparkBookingResultDTO(
     val account: String,
@@ -20,8 +21,9 @@ class InterparkBookingResultListener(
 ) : TaskResultListener<InterparkBookingResultDTO> {
 
     override val taskName: String = "interpark/booking"
+    override val dataType: KClass<InterparkBookingResultDTO> = InterparkBookingResultDTO::class
 
     override fun onReceivedTaskResult(nodeId: String, taskId: String, result: InterparkBookingResultDTO) {
-        
+
     }
 }
