@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
 
+import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-
-import { paths } from 'src/routes/paths.js';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteInterparkPerform, getPagedInterparkPerforms } from 'src/service/interpark-perform.js';
+import { getPagedTaskInstances } from 'src/service/task-instance.js';
+import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
 
 import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
@@ -14,6 +15,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
+import TaskView from './task-view/TaskView.jsx';
 
 let deleteId = null;
 
@@ -24,13 +26,21 @@ const TaskInstanceList = () => {
   const tableRef = useRef();
   const [editingRow, setEditingRow] = useState(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [currentTaskInstanceId, setCurrentTaskInstanceId] = useState();
+  const [taskInstanceDetailOpen, setTaskInstanceDetailOpen] = useState(false);
 
   const columns = [
     {
       key: 'id',
       label: 'ID',
       dataIndex: 'id',
-      width: 80,
+      width: 60,
+    },
+    {
+      key: 'nodeId',
+      label: 'Node',
+      dataIndex: 'nodeId',
+      width: 320,
     },
     {
       key: 'name',
@@ -39,26 +49,28 @@ const TaskInstanceList = () => {
       width: 160,
     },
     {
-      key: 'performCode',
-      label: 'Perform code',
-      dataIndex: 'performCode',
-      width: 130,
+      key: 'taskName',
+      label: 'Task name',
+      dataIndex: 'taskName',
+      width: 180,
     },
     {
-      key: 'placeCode',
-      label: 'Place code',
-      dataIndex: 'placeCode',
-      width: 120,
+      key: 'status',
+      label: 'Status',
+      dataIndex: 'status',
+      width: 180,
+      render: (row) => {
+        if (row.status === 'RUNNING') {
+          return <Chip label={row.status} color="success" size="small" />;
+        } else {
+          return <Chip label={row.status} size="small" />;
+        }
+      },
     },
     {
-      key: 'rounds',
-      label: 'rounds',
-      render: (row) => row.rounds.map((it) => `${it.date}-${it.time}`).join(','),
-    },
-    {
-      key: 'blocks',
-      label: 'Blocks',
-      render: (row) => row.blocks.map((it) => it.name).join(','),
+      key: 'remarks',
+      label: 'Remarks',
+      dataIndex: 'remarks',
     },
     {
       key: 'actions',
@@ -67,13 +79,12 @@ const TaskInstanceList = () => {
       render: (row) => (
         <>
           <IconButton
-            color="default"
             onClick={() => {
-              setEditingRow(row);
-              setCreateFormOpen(true);
+              setCurrentTaskInstanceId(row.id);
+              setTaskInstanceDetailOpen(true);
             }}
           >
-            <Iconify icon="solar:pen-bold" />
+            <Iconify icon="mingcute:eye-fill" />
           </IconButton>
           <IconButton
             color="error"
@@ -82,7 +93,7 @@ const TaskInstanceList = () => {
               setConfirmDeleteOpen(true);
             }}
           >
-            <Iconify icon="solar:trash-bin-trash-bold" />
+            <Iconify icon="mingcute:stop-fill" />
           </IconButton>
         </>
       ),
@@ -92,23 +103,20 @@ const TaskInstanceList = () => {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.interpark.root },
-          { name: 'Interpark', href: paths.dashboard.interpark.performList },
-          { name: 'Performs' },
-        ]}
+        links={[{ name: 'Dashboard' }, { name: 'Task' }, { name: 'Task instances' }]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark performs"
+        title="Task instances"
         columns={columns}
         data={data}
+        size="small"
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const performs = await getPagedInterparkPerforms(pagination);
-          setData(performs);
+          const taskInstances = await getPagedTaskInstances(pagination);
+          setData(taskInstances);
         }}
         actions={
           <>
@@ -119,13 +127,13 @@ const TaskInstanceList = () => {
             )}
             <Button
               variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
+              startIcon={<Iconify icon="mingcute:play-fill" />}
               onClick={() => {
                 setEditingRow(null);
                 setCreateFormOpen(true);
               }}
             >
-              Add perform
+              Run task
             </Button>
           </>
         }
@@ -137,25 +145,55 @@ const TaskInstanceList = () => {
           onCancel={() => setCreateFormOpen(false)}
           onSuccess={() => {
             setCreateFormOpen(false);
-            tableRef.current.reload();
+            tableRef.current?.reload();
           }}
         />
       )}
       <ConfirmDialog
         open={confirmDeleteOpen}
         onClose={() => setConfirmDeleteOpen(false)}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Stop task"
+        content="Are you sure want to stop task?"
         action={
-          <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkPerform(deleteId);
-            setConfirmDeleteOpen(false);
-            tableRef.current.reload();
-          }}>
-            Delete
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              await deleteInterparkPerform(deleteId);
+              setConfirmDeleteOpen(false);
+              tableRef.current?.reload();
+            }}
+          >
+            Stop
           </Button>
         }
       />
+      {taskInstanceDetailOpen && (
+        <Dialog
+          fullWidth
+          maxWidth={false}
+          open={taskInstanceDetailOpen}
+          slotProps={{
+            paper: {
+              sx: { maxWidth: 1400 },
+            },
+          }}
+        >
+          <DialogTitle>
+            Task instance ({currentTaskInstanceId})
+            <IconButton
+              aria-label="close"
+              onClick={() => setTaskInstanceDetailOpen(false)}
+              sx={{ position: 'absolute', right: 8, top: 8 }}
+            >
+              <Iconify icon="mingcute:close-fill" />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent sx={{ overflow: 'visible', px: 3, marginBottom: 3 }}>
+            <TaskView id={currentTaskInstanceId} />
+          </DialogContent>
+        </Dialog>
+      )}
     </DashboardContent>
   );
 };

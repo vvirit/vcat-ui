@@ -49,10 +49,9 @@ const NodeListPage = () => {
         }}
         onFetchData={async () => {
           const response = await getNodes();
-          setData(response.data);
+          setData(response);
         }}
         enableCheck
-        size="small"
         enablePage={false}
       />
     </DashboardContent>

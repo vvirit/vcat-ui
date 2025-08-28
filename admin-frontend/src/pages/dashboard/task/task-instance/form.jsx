@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
@@ -12,16 +12,15 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Grid, DialogTitle, DialogActions, DialogContent } from '@mui/material';
 
-import { addInterparkPerform, updateInterparkPerform } from 'src/service/interpark-perform.js';
+import { useServerData } from 'src/hooks/use-data.js';
 
-import TabPanel from 'src/components/tab-panel/index.jsx';
-import EditTable from 'src/components/edit-table/index.jsx';
+import { runTask, getNodes } from 'src/service/node.js';
 
-export default function CreateForm({ open, onCancel, onSuccess, data }) {
+export default function CreateForm({ open, onCancel, onSuccess }) {
   const [errorMessage, setErrorMessage] = useState();
-  const roundsTableRef = useRef();
-  const blocksTableRef = useRef();
   const [saving, setSaving] = useState(false);
+
+  const nodes = useServerData(getNodes, []);
 
   const {
     register,
@@ -29,58 +28,14 @@ export default function CreateForm({ open, onCancel, onSuccess, data }) {
     control,
     formState: { errors },
     trigger,
-  } = useForm({ defaultValues: data });
-
-  const roundsColumns = [
-    {
-      key: 'date',
-      label: 'Date',
-      dataIndex: 'date',
-      width: 180,
-    },
-    {
-      key: 'time',
-      label: 'Time',
-      dataIndex: 'time',
-      width: 140,
-    },
-    {
-      key: 'sequence',
-      label: 'Sequence',
-      dataIndex: 'sequence',
-    },
-  ];
-
-  const blocksColumns = [
-    {
-      key: 'name',
-      label: 'Name',
-      dataIndex: 'name',
-      width: 180,
-    },
-    {
-      key: 'code',
-      label: 'Code',
-      dataIndex: 'code',
-    },
-  ];
+  } = useForm();
 
   const onSubmit = async (formData) => {
     const valid = await trigger();
     if (!valid) return;
-    let payload = {
-      ...formData,
-      rounds: roundsTableRef.current?.getData() || [],
-      blocks: blocksTableRef.current?.getData() || [],
-    };
     try {
       setSaving(true);
-      if (data) {
-        payload.id = data.id;
-        await updateInterparkPerform(payload);
-      } else {
-        await addInterparkPerform(payload);
-      }
+      await runTask(formData);
       onSuccess();
     } catch (e) {
       setErrorMessage(e.message);
@@ -105,7 +60,7 @@ export default function CreateForm({ open, onCancel, onSuccess, data }) {
         sx={{ p: 2, width: '100%', padding: 0 }}
         onSubmit={handleSubmit(onSubmit)}
       >
-        <DialogTitle>{data ? 'Edit perform' : 'New perform'}</DialogTitle>
+        <DialogTitle>Run task</DialogTitle>
         <DialogContent sx={{ overflow: 'visible', px: 3 }}>
           {!!errorMessage && (
             <Alert severity="error" sx={{ mb: 3 }}>
@@ -114,10 +69,27 @@ export default function CreateForm({ open, onCancel, onSuccess, data }) {
           )}
           <Grid container spacing={2}>
             <Grid size={6}>
+              <FormControl fullWidth sx={{ mb: 2, margin: 0 }} size="small">
+                <InputLabel id="type-label">Node</InputLabel>
+                <Controller
+                  name="nodeId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select labelId="type-label" id="select" label="Node" {...field} fullWidth>
+                      {nodes.map((it) => (
+                        <MenuItem value={it.id}>{it.id}</MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid size={6}>
               <TextField
                 fullWidth
                 label="Name"
                 {...register('name', { required: 'Name is required' })}
+                autoComplete="off"
                 error={!!errors.name}
                 helperText={errors.name?.message}
                 size="small"
@@ -126,72 +98,46 @@ export default function CreateForm({ open, onCancel, onSuccess, data }) {
             <Grid size={6}>
               <TextField
                 fullWidth
-                label="Code"
-                {...register('performCode', { required: 'code is required' })}
-                error={!!errors.performCode}
-                helperText={errors.performCode?.message}
+                label="Task name"
+                {...register('taskName', { required: 'Task name is required' })}
+                autoComplete="off"
+                error={!!errors.name}
+                helperText={errors.name?.message}
                 size="small"
               />
             </Grid>
             <Grid size={6}>
               <TextField
                 fullWidth
-                label="Place code"
-                {...register('placeCode', { required: 'place code is required' })}
-                error={!!errors.placeCode}
-                helperText={errors.placeCode?.message}
+                label="Remarks"
+                {...register('remarks')}
+                autoComplete="off"
+                error={!!errors.performCode}
+                helperText={errors.performCode?.message}
                 size="small"
               />
             </Grid>
-            <Grid size={6}>
-              <FormControl fullWidth sx={{ mb: 2, margin: 0 }} size="small">
-                <InputLabel id="type-label">Tmg code</InputLabel>
-                <Controller
-                  name="tmgCode"
-                  control={control}
-                  render={({ field }) => (
-                    <Select labelId="type-label" id="select" label="Tmg code" {...field} fullWidth>
-                      <MenuItem value="D2006">D2006</MenuItem>
-                      <MenuItem value="D2003">D2003</MenuItem>
-                    </Select>
-                  )}
-                />
-              </FormControl>
+            <Grid size={12}>
+              <TextField
+                fullWidth
+                label="Argument"
+                {...register('argument')}
+                autoComplete="off"
+                error={!!errors.argument}
+                helperText={errors.argument?.message}
+                size="small"
+                multiline
+                rows={20}
+              />
             </Grid>
           </Grid>
-          <TabPanel
-            items={[
-              {
-                key: 'rounds',
-                label: 'Rounds',
-                children: (
-                  <EditTable
-                    ref={roundsTableRef}
-                    columns={roundsColumns}
-                    initialData={data?.rounds}
-                  />
-                ),
-              },
-              {
-                key: 'blocks',
-                label: 'Blocks',
-                children: (
-                  <EditTable
-                    ref={blocksTableRef}
-                    columns={blocksColumns}
-                    initialData={data?.blocks}
-                  />
-                ),
-              },
-            ]}
-          />
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={onCancel} disabled={saving}>
             Cancel
           </Button>
           <Button type="submit" variant="contained" loading={saving}>
-            Save
+            Run
           </Button>
         </DialogActions>
       </Box>

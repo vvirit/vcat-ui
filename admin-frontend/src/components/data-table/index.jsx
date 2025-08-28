@@ -37,6 +37,7 @@ const DataTable = forwardRef(
       onCheck = (rows) => {},
       cellSx = {},
       enablePage = true,
+      hideTopBar = false,
     },
     ref
   ) => {
@@ -123,34 +124,38 @@ const DataTable = forwardRef(
 
     return (
       <>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 8,
-            marginBottom: 16,
-          }}
-        >
-          <Typography variant="h5" sx={{ color: 'text.secondary' }}>
-            {title}
-          </Typography>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {actions}
-            <IconButton
-              variant="contained"
-              onClick={() => {
-                onFetchData({ page, pageSize });
+        {
+          !hideTopBar && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: 16,
               }}
             >
-              <RefreshIcon />
-            </IconButton>
-          </div>
-        </div>
+              <Typography variant="h5" sx={{ color: 'text.secondary' }}>
+                {title}
+              </Typography>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {actions}
+                <IconButton
+                  variant="contained"
+                  onClick={() => {
+                    onFetchData({ page, pageSize });
+                  }}
+                >
+                  <RefreshIcon />
+                </IconButton>
+              </div>
+            </div>
+          )
+        }
         <Card>
           {searchForm}
-          <TableContainer>
-            <Table sx={{ tableLayout: 'fixed', width: '100%' }} size={size}>
+          <TableContainer sx={{maxHeight: 420, overflowY: 'auto'}}>
+            <Table sx={{ tableLayout: 'fixed', width: '100%' }} size={size} stickyHeader>
               <TableHead>
                 <TableRow>{headList}</TableRow>
               </TableHead>
@@ -159,31 +164,28 @@ const DataTable = forwardRef(
             {itemList.length === 0 && (
               <EmptyContent sx={{ width: '100%', marginTop: '60px', marginBottom: '60px' }} />
             )}
-            {
-              enablePage && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <TablePagination
-                    component="div"
-                    rowsPerPageOptions={[10, 20, 50, 100]}
-                    count={data.totalElements}
-                    page={page}
-                    rowsPerPage={pageSize}
-                    onPageChange={(e, value) => {
-                      setPage(value);
-                      onFetchData({ page: value, pageSize });
-                    }}
-                    onRowsPerPageChange={(e) => {
-                      const value = parseInt(e.target.value, 10);
-                      setPageSize(value);
-                      setPage(0);
-                      onFetchData({ page: 0, pageSize: value });
-                    }}
-                  />
-                </div>
-              )
-            }
-
           </TableContainer>
+          {enablePage && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <TablePagination
+                component="div"
+                rowsPerPageOptions={[10, 20, 50, 100]}
+                count={data.totalElements}
+                page={page}
+                rowsPerPage={pageSize}
+                onPageChange={(e, value) => {
+                  setPage(value);
+                  onFetchData({ page: value, pageSize });
+                }}
+                onRowsPerPageChange={(e) => {
+                  const value = parseInt(e.target.value, 10);
+                  setPageSize(value);
+                  setPage(0);
+                  onFetchData({ page: 0, pageSize: value });
+                }}
+              />
+            </div>
+          )}
         </Card>
       </>
     );
