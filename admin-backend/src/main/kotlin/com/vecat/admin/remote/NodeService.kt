@@ -2,8 +2,6 @@ package com.vecat.admin.remote
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.vecat.admin.entity.TaskInstance
 import com.vecat.admin.entity.TaskInstanceStatus
 import com.vecat.admin.repository.TaskInstanceRepository
