@@ -1,14 +1,7 @@
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
+import { useRef, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import Autocomplete from '@mui/material/Autocomplete';
 
 import { useServerData } from 'src/hooks/use-data.js';
 
@@ -17,159 +10,130 @@ import { getAllPerforms } from 'src/service/interpark-perform.js';
 import { getQueueRoutersByType } from 'src/service/queue-router.js';
 import { getAllInterparkSeatRotatePools } from 'src/service/interpark-seat-rotate-pool.js';
 
-const fetchRouters = async () => await getQueueRoutersByType('INTERPARK')
+import VSelect from 'src/components/vcat/VSelect.jsx';
+import EditTable from 'src/components/vcat/VEditTable.jsx';
+import VTextField from 'src/components/vcat/VTextField.jsx';
+import VFormGroup from 'src/components/vcat/VFormGroup.jsx';
+import VAutoComplete from 'src/components/vcat/VAutoComplete.jsx';
 
-const InterparkBookingTaskForm = (
-  {
-    form,
-    data,
-  }
-) => {
+const fetchRouters = async () => await getQueueRoutersByType('INTERPARK');
+
+const InterparkBookingTaskForm = ({ data }) => {
   const proxies = useServerData(getAllProxies, []);
   const performs = useServerData(getAllPerforms, []);
   const rotatePools = useServerData(getAllInterparkSeatRotatePools, []);
   const routers = useServerData(fetchRouters, []);
   const [currentPerformId, setCurrentPerformId] = useState();
 
-  const {
-    register,
-    control,
-    formState: { errors },
-  } = form;
+  const roundsTableRef = useRef();
+
+  const currentPerform = performs.find((it) => it.id === currentPerformId);
+
+  const bookingRangesColumns = [
+    {
+      key: 'round',
+      label: 'Round',
+      dataIndex: 'round',
+      width: 200,
+      type: 'select',
+      options: currentPerform?.rounds?.map((r) => ({
+        value: r.sequence,
+        label: r.date,
+      })) || [],
+    },
+    {
+      key: 'blocks',
+      label: 'Blocks',
+      dataIndex: 'blocks',
+      type: 'multi-select',
+      width: 400,
+      options: currentPerform?.blocks?.map((b) => ({
+        value: b.code,
+        label: b.name,
+      })) || [],
+    },
+    {
+      key: 'round',
+      label: '',
+    },
+  ];
 
   return (
-    <Box
-      component="form"
-      sx={{ p: 2, width: '100%', padding: 0 }}
-    >
-      <Grid container spacing={2}>
-        <Grid size={6}>
-          <FormControl fullWidth sx={{ mb: 2, margin: 0 }} size="small">
-            <InputLabel id="type-label">Proxy</InputLabel>
-            <Controller
-              name="proxyId"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <Select labelId="type-label" id="select" label="Type" {...field} fullWidth>
-                  {
-                    proxies.map((it) => (
-                      <MenuItem value={it.id}>{it.name}</MenuItem>
-                    ))
-                  }
-                </Select>
-              )}
+    <Box component="form" sx={{ p: 2, width: '100%', padding: 0 }}>
+      <VFormGroup title="Base Settings">
+        <Grid container spacing={2}>
+          <Grid size={6}>
+            <VAutoComplete
+              name="performId"
+              label="Perform"
+              required
+              options={performs.map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+              onChange={(value) => {
+                setCurrentPerformId(value);
+              }}
             />
-          </FormControl>
+          </Grid>
+          <Grid size={6}>
+            <VSelect
+              name="proxyId"
+              label="Proxy"
+              required
+              options={proxies.map((it) => ({
+                value: it.id,
+                label: it.name,
+              }))}
+            />
+          </Grid>
+          <Grid size={6}>
+            <VSelect
+              name="captchaHandler"
+              label="Captcha Handler"
+              options={[
+                {
+                  value: 'CAP_SOLVER',
+                  label: 'CapSolver',
+                },
+              ]}
+            />
+          </Grid>
         </Grid>
-        <Grid size={6}>
-          <Controller
-            name="performId"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Autocomplete
-                options={performs.map((p) => ({
-                  id: p.id,
-                  label: p.name,
-                }))}
-                size="small"
-                onChange={(_, v) => {
-                  field.onChange(v?.id ?? null);
-                  setCurrentPerformId(v?.id ?? null);
-                }}
-                getOptionLabel={(o) => o.label}
-                isOptionEqualToValue={(a, b) => a.id === b.id} // 避免比较失败
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Perform"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-            )}
-          />
+      </VFormGroup>
+      <VFormGroup title="Queue Settings">
+        <Grid container spacing={2}>
+          <Grid size={6}>
+            <VTextField label="Concurrency" name="concurrency" required />
+          </Grid>
+          <Grid size={6}>
+            <VTextField label="Request Interval(ms)" name="requestInterval" required />
+          </Grid>
         </Grid>
-        <Grid size={6}>
-          <Controller
-            name="routerId"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Autocomplete
-                options={routers.map((p) => ({
-                  id: p.id,
-                  label: p.name,
-                }))}
-                size="small"
-                onChange={(_, v) => {
-                  field.onChange(v?.id ?? null);
-                }}
-                getOptionLabel={(o) => o.label}
-                isOptionEqualToValue={(a, b) => a.id === b.id} // 避免比较失败
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Router"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-            )}
-          />
+      </VFormGroup>
+      <VFormGroup title="Booking settings">
+        <Grid container spacing={2}>
+          <Grid size={6}>
+            <VTextField label="Concurrency" name="concurrency" required />
+          </Grid>
+          <Grid size={6}>
+            <VTextField label="Request Interval(ms)" name="requestInterval" required />
+          </Grid>
+          <Grid size={6}>
+            <VAutoComplete
+              name="rotatePoolId"
+              label="Seat Rotate Pool"
+              options={rotatePools.map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+            />
+          </Grid>
         </Grid>
-        <Grid size={6}>
-          <TextField
-            fullWidth
-            label="Concurrency"
-            {...register('concurrency', { required: 'Concurrency is required' })}
-            error={!!errors.concurrency}
-            helperText={errors.concurrency?.message}
-            size="small"
-          />
-        </Grid>
-        <Grid size={6}>
-          <TextField
-            fullWidth
-            label="Request Interval(ms)"
-            {...register('requestInterval', { required: 'RequestInterval is required' })}
-            error={!!errors.requestInterval}
-            helperText={errors.requestInterval?.message}
-            size="small"
-          />
-        </Grid>
-        <Grid size={6}>
-          <Controller
-            name="rotatePoolId"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Autocomplete
-                options={rotatePools
-                  .filter((p) => p.performId === currentPerformId)
-                  .map((p) => ({
-                    id: p.id,
-                    label: p.name,
-                  }))}
-                size="small"
-                onChange={(_, v) => {
-                  field.onChange(v?.id ?? null);
-                }}
-                getOptionLabel={(o) => o.label}
-                isOptionEqualToValue={(a, b) => a.id === b.id} // 避免比较失败
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Seat rotate pool"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-            )}
-          />
-        </Grid>
-      </Grid>
+      </VFormGroup>
+      <VFormGroup title="Booking Ranges">
+        <EditTable ref={roundsTableRef} columns={bookingRangesColumns} initialData={data?.rounds} />
+      </VFormGroup>
     </Box>
   );
 };

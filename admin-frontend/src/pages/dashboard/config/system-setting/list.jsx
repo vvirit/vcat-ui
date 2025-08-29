@@ -6,9 +6,9 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths.js';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getPagedSystemSettings } from 'src/service/system-setting.js';
 import {
   deleteInterparkAccountGroup,
-  getPagedInterparkAccountGroups,
 } from 'src/service/interpark-account-group.js';
 
 import { Iconify } from 'src/components/iconify/index.js';
@@ -20,7 +20,7 @@ import CreateForm from './form.jsx';
 
 let deleteId = null;
 
-const InterparkAccountGroupList = () => {
+const SystemSettingList = () => {
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
   const [createFormOpen, setCreateFormOpen] = useState(false);
@@ -42,23 +42,22 @@ const InterparkAccountGroupList = () => {
       width: 180,
     },
     {
-      key: 'condition',
-      label: 'Condition',
-      dataIndex: 'condition',
-      width: 400,
+      key: 'description',
+      label: 'Description',
+      dataIndex: 'description',
+      width: 250,
     },
     {
-      key: 'remarks',
-      label: 'Remarks',
-      dataIndex: 'remarks',
+      key: 'value',
+      label: 'Value',
+      dataIndex: 'value',
     },
     {
       key: 'actions',
       label: 'Actions',
       width: 120,
       render: (row) => (
-        <>
-          <IconButton
+        <IconButton
             color="default"
             onClick={() => {
               setEditingRow(row);
@@ -67,16 +66,6 @@ const InterparkAccountGroupList = () => {
           >
             <Iconify icon="solar:pen-bold" />
           </IconButton>
-          <IconButton
-            color="error"
-            onClick={() => {
-              deleteId = row.id;
-              setConfirmDeleteOpen(true);
-            }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
-        </>
       ),
     },
   ];
@@ -93,34 +82,15 @@ const InterparkAccountGroupList = () => {
       />
       <DataTable
         ref={tableRef}
-        title="Interpark account groups"
+        title="System Settings"
         columns={columns}
         data={data}
         enableCheck
         onCheck={setSelectedRows}
         onFetchData={async (pagination) => {
-          const performs = await getPagedInterparkAccountGroups(pagination);
-          setData(performs);
+          const settings = await getPagedSystemSettings(pagination);
+          setData(settings);
         }}
-        actions={
-          <>
-            {selectedRows.length !== 0 && (
-              <Button variant="outlined" color="error">
-                Delete
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-              onClick={() => {
-                setEditingRow(null);
-                setCreateFormOpen(true);
-              }}
-            >
-              Add group
-            </Button>
-          </>
-        }
       />
       {createFormOpen && (
         <CreateForm
@@ -152,4 +122,4 @@ const InterparkAccountGroupList = () => {
   );
 };
 
-export default InterparkAccountGroupList;
+export default SystemSettingList;

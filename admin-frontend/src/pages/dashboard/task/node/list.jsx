@@ -5,7 +5,7 @@ import { paths } from 'src/routes/paths.js';
 import { getNodes } from 'src/service/node.js';
 import { DashboardContent } from 'src/layouts/dashboard/index.js';
 
-import DataTable from 'src/components/data-table/index.jsx';
+import DataTable from 'src/components/vcat/VDataTable.jsx';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs/index.js';
 
 const NodeListPage = () => {

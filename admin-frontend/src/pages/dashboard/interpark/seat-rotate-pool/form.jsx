@@ -16,7 +16,7 @@ import {
 } from "src/service/interpark-seat-rotate-pool.js";
 
 import TabPanel from 'src/components/tab-panel/index.jsx';
-import EditTable from 'src/components/edit-table/index.jsx';
+import EditTable from 'src/components/vcat/VEditTable.jsx';
 
 export default function CreateForm({open, onCancel, onSuccess, data}) {
 

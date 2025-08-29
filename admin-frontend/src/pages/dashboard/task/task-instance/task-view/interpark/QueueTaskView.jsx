@@ -5,7 +5,7 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
 import TabPanel from 'src/components/tab-panel/index.jsx';
-import DataTable from 'src/components/data-table/index.jsx';
+import DataTable from 'src/components/vcat/VDataTable.jsx';
 
 const columns = [
   {
@@ -305,6 +305,7 @@ const QueueTaskView = ({ taskInstance }) => {
                 rowId="id"
                 hideTopBar
                 size="small"
+                maxHeight={420}
               />
             ),
           },

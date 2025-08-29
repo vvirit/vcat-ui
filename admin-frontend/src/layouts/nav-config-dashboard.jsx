@@ -65,11 +65,12 @@ export const navData = [
         ],
       },
       {
-        title: 'Config',
+        title: 'Setting',
         path: paths.dashboard.config.root,
-        icon: ICONS.label,
+        icon: ICONS.job,
         children: [
           { title: 'Proxy', path: paths.dashboard.config.proxyList },
+          { title: 'System Setting', path: paths.dashboard.config.systemSettingList },
         ],
       },
     ],

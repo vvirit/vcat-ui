@@ -14,7 +14,7 @@ import { DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
 
 import { addProxy } from 'src/service/proxy.js';
 
-import EditTable from 'src/components/edit-table/index.jsx';
+import EditTable from 'src/components/vcat/VEditTable.jsx';
 
 import { Iconify } from '../../../../components/iconify/index.js';
 

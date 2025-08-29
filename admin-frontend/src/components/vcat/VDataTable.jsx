@@ -1,4 +1,4 @@
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
@@ -7,17 +7,17 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   Card,
   Table,
-  TableRow,
   TableBody,
   TableCell,
-  TableHead,
   TableContainer,
+  TableHead,
   TablePagination,
+  TableRow,
 } from '@mui/material';
 
 import { EmptyContent } from '../empty-content/index.js';
 
-const DataTable = forwardRef(
+const VDataTable = forwardRef(
   (
     {
       columns,
@@ -38,6 +38,7 @@ const DataTable = forwardRef(
       cellSx = {},
       enablePage = true,
       hideTopBar = false,
+      maxHeight = 600,
     },
     ref
   ) => {
@@ -124,37 +125,35 @@ const DataTable = forwardRef(
 
     return (
       <>
-        {
-          !hideTopBar && (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: 8,
-                marginBottom: 16,
-              }}
-            >
-              <Typography variant="h5" sx={{ color: 'text.secondary' }}>
-                {title}
-              </Typography>
-              <div style={{ display: 'flex', gap: 8 }}>
-                {actions}
-                <IconButton
-                  variant="contained"
-                  onClick={() => {
-                    onFetchData({ page, pageSize });
-                  }}
-                >
-                  <RefreshIcon />
-                </IconButton>
-              </div>
+        {!hideTopBar && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 8,
+              marginBottom: 16,
+            }}
+          >
+            <Typography variant="h5" sx={{ color: 'text.secondary' }}>
+              {title}
+            </Typography>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {actions}
+              <IconButton
+                variant="contained"
+                onClick={() => {
+                  onFetchData({ page, pageSize });
+                }}
+              >
+                <RefreshIcon />
+              </IconButton>
             </div>
-          )
-        }
+          </div>
+        )}
         <Card>
           {searchForm}
-          <TableContainer sx={{maxHeight: 420, overflowY: 'auto'}}>
+          <TableContainer sx={{ maxHeight, overflowY: 'auto' }}>
             <Table sx={{ tableLayout: 'fixed', width: '100%' }} size={size} stickyHeader>
               <TableHead>
                 <TableRow>{headList}</TableRow>
@@ -192,4 +191,4 @@ const DataTable = forwardRef(
   }
 );
 
-export default DataTable;
+export default VDataTable;

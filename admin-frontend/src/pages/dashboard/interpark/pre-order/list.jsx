@@ -8,8 +8,8 @@ import { paths } from 'src/routes/paths.js';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { deleteInterparkPerform, getPagedInterparkPerforms } from 'src/service/interpark-perform.js';
 
-import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
+import DataTable from 'src/components/vcat/VDataTable.jsx';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 

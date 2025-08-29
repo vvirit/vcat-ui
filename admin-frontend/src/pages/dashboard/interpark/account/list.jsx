@@ -11,8 +11,8 @@ import {
   getPagedInterparkAccounts,
 } from 'src/service/interpark-account.js';
 
-import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
+import DataTable from 'src/components/vcat/VDataTable.jsx';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 

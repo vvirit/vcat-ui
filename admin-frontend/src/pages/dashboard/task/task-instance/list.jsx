@@ -3,14 +3,14 @@ import { useRef, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getPagedTaskInstances } from 'src/service/task-instance.js';
 import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
 
-import DataTable from 'src/components/data-table';
 import { Iconify } from 'src/components/iconify/index.js';
+import DataTable from 'src/components/vcat/VDataTable.jsx';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
@@ -62,6 +62,8 @@ const TaskInstanceList = () => {
       render: (row) => {
         if (row.status === 'RUNNING') {
           return <Chip label={row.status} color="success" size="small" />;
+        } else if (row.status === 'FINISHED') {
+          return <Chip label={row.status} color="primary" size="small" />;
         } else {
           return <Chip label={row.status} size="small" />;
         }

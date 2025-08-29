@@ -15,7 +15,7 @@ import {
   TableContainer,
 } from '@mui/material';
 
-const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
+const VEditTable = forwardRef(({ columns, initialData, sx }, ref) => {
   const [data, setData] = useState(initialData || [{}]);
   const [menuRowIndex, setMenuRowIndex] = useState();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -213,4 +213,4 @@ const EditTable = forwardRef(({ columns, initialData, sx }, ref) => {
   );
 });
 
-export default EditTable;
+export default VEditTable;

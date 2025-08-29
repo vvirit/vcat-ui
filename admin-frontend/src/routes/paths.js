@@ -54,6 +54,7 @@ export const paths = {
     config: {
       root: `${ROOTS.DASHBOARD}/config`,
       proxyList: `${ROOTS.DASHBOARD}/config/proxy-list`,
+      systemSettingList: `${ROOTS.DASHBOARD}/config/system-setting-list`,
     },
     task: {
       root: `${ROOTS.DASHBOARD}/task`,
