@@ -1,11 +1,9 @@
 package com.vecat.admin.http
 
-import com.vecat.admin.http.interceptors.AwsWafInterceptor
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
-import kotlinx.serialization.encodeToString
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
@@ -66,6 +64,11 @@ val httpJsonObjectMapper = jacksonObjectMapper().apply {
 class HttpRequestExecution(
     val request: HttpRequest,
     val response: HttpResponseData,
+)
+
+data class FormItem(
+    var name: String,
+    var value: String,
 )
 
 class CookieStorage {
@@ -142,10 +145,6 @@ abstract class HttpClient(scope: HttpClientConfig.() -> Unit = {}) {
 
     val config = HttpClientConfig().apply(scope)
     var cookieStorage = config.cookieStorage
-
-    init {
-        addInterceptor(AwsWafInterceptor)
-    }
 
     fun addInterceptor(vararg interceptor: ImpersonateHttpInterceptor) {
         interceptors.addAll(interceptor)

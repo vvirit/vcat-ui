@@ -2,8 +2,9 @@ import { paths } from 'src/routes/paths';
 
 import { CONFIG } from 'src/global-config';
 
-import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
+
+import { Iconify } from '../components/iconify/index.js';
 
 // ----------------------------------------------------------------------
 
@@ -42,21 +43,12 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export const navData = [
-  /**
-   * Overview
-   */
   {
-    subheader: 'Overview',
-    items: [
-    ],
-  },
-  {
-    subheader: 'System',
     items: [
       {
         title: 'Task',
         path: paths.dashboard.task.root,
-        icon: ICONS.user,
+        icon: <Iconify icon="mdi:robot" />,
         children: [
           { title: 'Nodes', path: paths.dashboard.task.nodeList },
           { title: 'Tasks', path: paths.dashboard.task.taskList },
@@ -65,43 +57,27 @@ export const navData = [
         ],
       },
       {
+        title: 'Interpark',
+        path: paths.dashboard.interpark.root,
+        icon: <Iconify icon="mdi:web"/>,
+        children: [
+          { title: 'Performs', path: paths.dashboard.interpark.performList },
+          { title: 'Orders', path: paths.dashboard.interpark.orderList },
+          { title: 'Lock Only Orders', path: paths.dashboard.interpark.preOrderList },
+          { title: 'Seat Rotate Pools', path: paths.dashboard.interpark.seatRotatePoolList },
+          { title: 'Accounts', path: paths.dashboard.interpark.accountList },
+          { title: 'Account groups', path: paths.dashboard.interpark.accountGroupList },
+        ],
+      },
+      {
         title: 'Setting',
         path: paths.dashboard.config.root,
-        icon: ICONS.job,
+        icon: <Iconify icon="mdi:cog" />,
         children: [
           { title: 'Proxy', path: paths.dashboard.config.proxyList },
           { title: 'System Setting', path: paths.dashboard.config.systemSettingList },
         ],
       },
-    ],
-  },
-  {
-    subheader: 'Data',
-    items: [
-      {
-        title: 'Interpark',
-        path: paths.dashboard.interpark.root,
-        children: [
-          { title: 'Performs', path: paths.dashboard.interpark.performList },
-          { title: 'Orders', path: paths.dashboard.interpark.orderList },
-          { title: 'Lock only orders', path: paths.dashboard.interpark.preOrderList },
-          { title: 'Seat rotate pools', path: paths.dashboard.interpark.seatRotatePoolList },
-          { title: 'Accounts', path: paths.dashboard.interpark.accountList },
-          { title: 'Account groups', path: paths.dashboard.interpark.accountGroupList },
-        ],
-      },
-      // {
-      //   title: 'Melon',
-      //   path: 'melon',
-      //   children: [
-      //   ],
-      // },
-      // {
-      //   title: 'Yes24',
-      //   path: 'yes24',
-      //   children: [
-      //   ],
-      // },
     ],
   },
 ];

@@ -67,5 +67,6 @@ class NodeService(
         val saved = taskInstanceRepository.save(taskInstance)
         dto.instanceId = saved.id.toString()
         remoteService.sendRemote(dto.nodeId, RemoteAction.RUN_TASK, dto)
+        redisTemplate.opsForValue().set("task:${dto.instanceId}:args", dto.argument)
     }
 }

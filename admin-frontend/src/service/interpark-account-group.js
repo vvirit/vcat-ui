@@ -31,3 +31,8 @@ export async function deleteInterparkAccountGroup(id) {
   }
   return data;
 }
+
+export async function getAllInterparkAccountGroup() {
+  const response = await axios.get(`/api/interpark-account-group/all`);
+  return response.data;
+}

@@ -16,6 +16,14 @@ java {
 }
 
 repositories {
+    maven {
+        name = "virit"
+        setUrl("https://packages.aliyun.com/maven/repository/2380927-release-M2py6y")
+        credentials {
+            username = "boP2D1"
+            password = "Vc6XtRq5cX"
+        }
+    }
     mavenCentral()
 }
 
@@ -30,6 +38,11 @@ dependencies {
     implementation("cn.dev33:sa-token-spring-boot3-starter:1.44.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.ktor:ktor-client-core:3.0.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("io.ktor:ktor-serialization-jackson:3.0.1")
+    implementation("org.jsoup:jsoup:1.16.1")
+    implementation("net.covers1624:curl4j:3.0.6")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

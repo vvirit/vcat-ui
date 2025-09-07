@@ -9,6 +9,11 @@ enum class ProxyType {
   ITEM,
 }
 
+enum class ProxyProtocol {
+    HTTP,
+    SOCKS5,
+}
+
 @Entity
 @Table(name = "t_proxy")
 data class Proxy(

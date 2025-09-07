@@ -1,13 +1,23 @@
 package com.vecat.admin.service
 
-import com.vecat.admin.entity.InterparkPerform
 import com.vecat.admin.entity.Proxy
+import com.vecat.admin.entity.ProxyProtocol
 import com.vecat.admin.entity.ProxyType
 import com.vecat.admin.repository.ProxyRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+
+data class ProxyConfig(
+    val type: ProxyType,
+    val protocol: ProxyProtocol,
+    val host: String,
+    val port: Int,
+    val username: String,
+    val password: String,
+    val proxies: List<ProxyConfig>? = null,
+)
 
 @Service
 class ProxyService(
@@ -46,5 +56,32 @@ class ProxyService(
                 password = it.password,
             )
         }
+    }
+
+    @Transactional
+    fun getById(id: Long): Proxy? {
+        return repository.findById(id).orElse(null)
+    }
+
+    fun getProxyAsProxyConfig(proxyId: Long): ProxyConfig {
+        val proxy = repository.findById(proxyId).get()
+        return ProxyConfig(
+            type = proxy.type!!,
+            protocol = ProxyProtocol.HTTP,
+            host = proxy.host ?: "",
+            port = proxy.port ?: 0,
+            username = proxy.username ?: "",
+            password = proxy.password ?: "",
+            proxies = proxy.proxies.map {
+                ProxyConfig(
+                    type = ProxyType.ITEM,
+                    protocol = ProxyProtocol.HTTP,
+                    host = it.host ?: "",
+                    port = it.port ?: 0,
+                    username = it.username ?: "",
+                    password = it.password ?: "",
+                )
+            }
+        )
     }
 }

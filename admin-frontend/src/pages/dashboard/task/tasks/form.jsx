@@ -4,13 +4,18 @@ import { useForm } from 'react-hook-form';
 import { Grid } from '@mui/material';
 import Alert from '@mui/material/Alert';
 
+import { useServerData } from 'src/hooks/use-data.js';
+
+import { getNodes } from 'src/service/node.js';
 import { addTask, updateTask } from 'src/service/task.js';
 
 import VDialog from 'src/components/vcat/VDialog.jsx';
+import VSelect from 'src/components/vcat/VSelect.jsx';
 import VTextField from 'src/components/vcat/VTextField.jsx';
 import VAutoComplete from 'src/components/vcat/VAutoComplete.jsx';
 import VFormContainer from 'src/components/vcat/VFormContainer.jsx';
 
+import InterparkLoginTaskForm from './forms/interpark/login.jsx';
 import InterparkBookingTaskForm from './forms/interpark/booking.jsx';
 
 const TaskDefinitions = [
@@ -24,21 +29,29 @@ const TaskDefinitions = [
         name: 'Booking',
         value: 'BOOKING',
         key: 'interparkBookingTask',
-        form: (form) => <InterparkBookingTaskForm form={form} />,
+        form: (form, data) => <InterparkBookingTaskForm form={form} data={data} />,
+      },
+      {
+        name: 'Login',
+        value: 'LOGIN',
+        key: 'interparkLoginTask',
+        form: (form, data) => <InterparkLoginTaskForm form={form} data={data} />,
       },
     ],
   },
 ];
 
-export function CreateForm({ open, onCancel, onSuccess, data }) {
+export function CreateForm({ open, onCancel, onSuccess, data, runView = false }) {
   const [errorMessage, setErrorMessage] = useState();
   const [saving, setSaving] = useState(false);
+
   const [currentCategory, setCurrentCategory] = useState(data?.category);
-  const [currentTask, setCurrentTask] = useState(data?.taskType);
+  const [currentTask, setCurrentTask] = useState(data?.taskName);
+  const nodes = useServerData(getNodes, []);
 
   const form = useForm({ defaultValues: data });
 
-  const taskArgumentForm = useForm();
+  const taskArgumentForm = useForm({ defaultValues: data?.argument });
 
   const onSave = async () => {
     const [mainFormOk, argumentFormOk] = await Promise.all([
@@ -47,10 +60,7 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
     ]);
     if (!mainFormOk || !argumentFormOk) return;
     const payload = form.getValues();
-    const key = TaskDefinitions.find((it) => it.category.value === currentCategory).tasks.find(
-      (it) => it.value === currentTask
-    ).key;
-    payload[key] = taskArgumentForm.getValues();
+    payload.argument = taskArgumentForm.getValues();
     try {
       setSaving(true);
       if (data) {
@@ -70,8 +80,8 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
   return (
     <VDialog
       open={open}
-      title={data ? 'Edit Task' : 'New Task'}
-      okText="Save"
+      title={runView ? 'Run Task' : data ? 'Edit Task' : 'New Task'}
+      okText={ runView ? 'Run' : 'Save' }
       okButtonProps={{
         disabled: saving,
       }}
@@ -88,6 +98,21 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
       )}
       <VFormContainer form={form}>
         <Grid container spacing={2}>
+          {
+            runView && (
+              <Grid size={12}>
+                <VSelect
+                  name="nodeId"
+                  label="Node"
+                  options={nodes.map((it) => ({
+                    value: it.id,
+                    label: it.id,
+                  }))}
+                  required
+                />
+              </Grid>
+            )
+          }
           <Grid size={6}>
             <VAutoComplete
               name="category"
@@ -103,8 +128,8 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
           </Grid>
           <Grid size={6}>
             <VAutoComplete
-              name="Task"
-              label="taskType"
+              name="taskName"
+              label="Task"
               options={TaskDefinitions.find(
                 (it) => it.category.value === currentCategory
               )?.tasks.map((it) => ({
@@ -120,7 +145,7 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
             <VTextField label="Name" name="name" required />
           </Grid>
           <Grid size={6}>
-            <VTextField label="Remarks" name="remarks" required />
+            <VTextField label="Remarks" name="remarks" />
           </Grid>
         </Grid>
       </VFormContainer>
@@ -128,7 +153,7 @@ export function CreateForm({ open, onCancel, onSuccess, data }) {
         {currentTask
           ? TaskDefinitions.find((it) => it.category.value === currentCategory)
               .tasks.find((it) => it.value === currentTask)
-              .form(taskArgumentForm)
+              .form(taskArgumentForm, data?.argument)
           : undefined}
       </VFormContainer>
     </VDialog>

@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface InterparkPerformRepository: JpaRepository<InterparkPerform, Long>, JpaSpecificationExecutor<InterparkPerform> {
+    fun findFirstByPerformCode(code: String): InterparkPerform
 }

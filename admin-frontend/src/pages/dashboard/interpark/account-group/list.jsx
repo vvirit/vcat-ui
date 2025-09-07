@@ -48,6 +48,18 @@ const InterparkAccountGroupList = () => {
       width: 400,
     },
     {
+      key: 'pageNumber',
+      label: 'Page Number',
+      dataIndex: 'pageNumber',
+      width: 126,
+    },
+    {
+      key: 'pageSize',
+      label: 'Page Size',
+      dataIndex: 'pageSize',
+      width: 100,
+    },
+    {
       key: 'remarks',
       label: 'Remarks',
       dataIndex: 'remarks',

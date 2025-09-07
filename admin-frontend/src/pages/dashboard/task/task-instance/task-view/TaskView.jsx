@@ -6,12 +6,19 @@ import Typography from '@mui/material/Typography';
 
 import { getTaskInstanceById } from 'src/service/task-instance.js';
 
+import LoginTaskView from './interpark/LoginTaskView.jsx';
 import DefaultTaskView from './common/DefaultTaskView.jsx';
 import BookingTaskView from './interpark/BookingTaskView.jsx';
 
 const getDetailView = (taskInstance) => {
   switch (taskInstance.taskName) {
     case 'common/hello': {
+      return <BookingTaskView taskInstance={taskInstance} />;
+    }
+    case 'interpark/login': {
+      return <LoginTaskView taskInstance={taskInstance} />;
+    }
+    case 'interpark/booking': {
       return <BookingTaskView taskInstance={taskInstance} />;
     }
     default: {
@@ -21,7 +28,7 @@ const getDetailView = (taskInstance) => {
 };
 
 const TaskView = ({ id }) => {
-  const [taskInstance, setTaskInstance] = useState(null);
+  const [taskInstance, setTaskInstance] = useState();
 
   useEffect(() => {
     (async () => {
@@ -90,7 +97,9 @@ const TaskView = ({ id }) => {
         </Grid>
       </Grid>
       <Divider sx={{ my: 1 }} />
-      {getDetailView(taskInstance)}
+      {
+        getDetailView(taskInstance)
+      }
     </>
   );
 };

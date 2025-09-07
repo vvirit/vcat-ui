@@ -32,3 +32,8 @@ export async function deleteTask(id) {
   return data;
 }
 
+export async function getTask(id) {
+  const response = await axios.get(`/api/task/${id}`);
+  return response.data;
+}
+

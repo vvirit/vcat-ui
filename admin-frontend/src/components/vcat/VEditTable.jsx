@@ -15,7 +15,7 @@ import {
   TableContainer,
 } from '@mui/material';
 
-const VEditTable = forwardRef(({ columns, initialData, sx }, ref) => {
+const VEditTable = forwardRef(({ columns, initialData, sx, onChange }, ref) => {
   const [data, setData] = useState(initialData || [{}]);
   const [menuRowIndex, setMenuRowIndex] = useState();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,6 +26,7 @@ const VEditTable = forwardRef(({ columns, initialData, sx }, ref) => {
     setData((prev) => {
       const newData = [...prev];
       newData[index] = { ...newData[index], [key]: value };
+      onChange?.(newData);
       return newData;
     });
   };

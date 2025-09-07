@@ -88,4 +88,14 @@ class InterparkPerformService(val repository: InterparkPerformRepository) {
     fun deleteById(id: Long) {
         repository.deleteById(id)
     }
+
+    @Transactional
+    fun <T> getById(id: Long, transform: (InterparkPerform) -> T): T {
+        return repository.findById(id).map { transform(it) }.orElseThrow()
+    }
+
+    @Transactional
+    fun <T> findByPerformCode(code: String, transform: (InterparkPerform) -> T): T {
+        return transform(repository.findFirstByPerformCode(code))
+    }
 }

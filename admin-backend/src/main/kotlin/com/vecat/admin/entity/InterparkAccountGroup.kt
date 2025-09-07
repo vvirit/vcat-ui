@@ -15,6 +15,12 @@ data class InterparkAccountGroup(
   @Column(nullable = false, length = 512, unique = false)
   var condition: String,
 
+  @Column
+  var pageNumber: Int? = null,
+
+  @Column
+  var pageSize: Int? = null,
+
   @Column(nullable = true, length = 64)
   var remarks: String,
 ) : BaseEntity()

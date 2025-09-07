@@ -3,10 +3,8 @@ import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 
-import { paths } from 'src/routes/paths.js';
-
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteTask, getPageTasks } from 'src/service/task.js';
+import { deleteTask, getPageTasks, getTask } from 'src/service/task.js';
 
 import { Iconify } from 'src/components/iconify/index.js';
 import DataTable from 'src/components/vcat/VDataTable.jsx';
@@ -24,6 +22,7 @@ const InterparkPerformList = () => {
   const tableRef = useRef();
   const [editingRow, setEditingRow] = useState(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [runView, setRunView] = useState(false);
 
   const columns = [
     {
@@ -39,10 +38,16 @@ const InterparkPerformList = () => {
       width: 140,
     },
     {
-      key: 'task',
+      key: 'taskName',
       label: 'Task',
-      dataIndex: 'taskType',
+      dataIndex: 'taskName',
       width: 140,
+    },
+    {
+      key: 'name',
+      label: 'Name',
+      dataIndex: 'name',
+      width: 180,
     },
     {
       key: 'remarks',
@@ -52,13 +57,26 @@ const InterparkPerformList = () => {
     {
       key: 'actions',
       label: 'Actions',
-      width: 120,
+      width: 150,
       render: (row) => (
         <>
           <IconButton
             color="default"
-            onClick={() => {
-              setEditingRow(row);
+            onClick={async () => {
+              const detailData = await getTask(row.id);
+              setEditingRow(detailData);
+              setRunView(true);
+              setCreateFormOpen(true);
+            }}
+          >
+            <Iconify icon="solar:play-bold" />
+          </IconButton>
+          <IconButton
+            color="default"
+            onClick={async () => {
+              const detailData = await getTask(row.id);
+              setRunView(false);
+              setEditingRow(detailData);
               setCreateFormOpen(true);
             }}
           >
@@ -81,16 +99,12 @@ const InterparkPerformList = () => {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.interpark.root },
-          { name: 'Interpark', href: paths.dashboard.interpark.performList },
-          { name: 'Seat rotate pools' },
-        ]}
+        links={[{ name: 'Dashboard' }, { name: 'Task' }, { name: 'Tasks' }]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark tasks"
+        title="Tasks"
         columns={columns}
         data={data}
         enableCheck
@@ -111,6 +125,7 @@ const InterparkPerformList = () => {
               startIcon={<Iconify icon="mingcute:add-line" />}
               onClick={() => {
                 setEditingRow(null);
+                setRunView(false);
                 setCreateFormOpen(true);
               }}
             >
@@ -128,6 +143,7 @@ const InterparkPerformList = () => {
             setCreateFormOpen(false);
             tableRef.current.reload();
           }}
+          runView={runView}
         />
       )}
       <ConfirmDialog

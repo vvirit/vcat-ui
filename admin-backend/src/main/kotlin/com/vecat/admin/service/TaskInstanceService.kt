@@ -99,10 +99,19 @@ class TaskInstanceService(
         val argument: String,
         val information: String,
         val errorMessage: String,
+        val state: String,
+        val results: List<TaskInstanceResultItemDTO>,
     )
 
+    data class TaskInstanceResultItemDTO(
+        val id: Long,
+        val data: String,
+    )
+
+    @Transactional
     fun getById(id: Long): TaskInstanceDTO {
         val instance = repository.findById(id).get()
+        val state = redisTemplate.opsForValue().get("task:$id:state") ?: ""
         return TaskInstanceDTO(
             id = instance.id!!,
             nodeId = instance.nodeId,
@@ -113,6 +122,13 @@ class TaskInstanceService(
             argument = instance.argument,
             information = instance.information ?: "",
             errorMessage = instance.errorMessage ?: "",
+            results = instance.resultItems.map {
+                TaskInstanceResultItemDTO(
+                    id = it.id!!,
+                    data = it.data,
+                )
+            },
+            state = state,
         )
     }
 

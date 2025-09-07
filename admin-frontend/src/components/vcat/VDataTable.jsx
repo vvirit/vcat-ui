@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
@@ -7,12 +7,12 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   Card,
   Table,
+  TableRow,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableContainer,
   TablePagination,
-  TableRow,
 } from '@mui/material';
 
 import { EmptyContent } from '../empty-content/index.js';
@@ -27,6 +27,7 @@ const VDataTable = forwardRef(
         pageSize: 10,
         totalElements: 0,
       },
+      fullData,
       size = 'medium',
       rowId = 'id',
       title = '',
@@ -46,13 +47,14 @@ const VDataTable = forwardRef(
     const [pageSize, setPageSize] = useState(10);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
+    if (fullData) {
+      data.list = fullData.slice(page * pageSize, (page + 1) * pageSize);
+      data.totalElements = fullData.length;
+    }
+
     useEffect(() => {
       onFetchData({ page: 0, pageSize: 10 });
     }, []);
-
-    useEffect(() => {
-      setSelectedRowKeys([]);
-    }, [data]);
 
     useImperativeHandle(ref, () => ({
       reload: () => onFetchData({ page, pageSize }),

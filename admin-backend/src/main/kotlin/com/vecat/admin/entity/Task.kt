@@ -1,21 +1,19 @@
 package com.vecat.admin.entity
 
 import com.vecat.admin.base.BaseEntity
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
-enum class TaskCategory {
-    INTERPARK,
+enum class TaskCategory(val category: String) {
+    INTERPARK("interpark"),
 }
 
-enum class TaskType {
-    BOOKING,
+enum class TaskName(val taskName: String) {
+    BOOKING("booking"),
+    LOGIN("login"),
 }
 
 @Entity
@@ -29,8 +27,11 @@ data class Task(
     var category: TaskCategory,
 
     @Enumerated(EnumType.STRING)
-    var taskType: TaskType,
+    var taskName: TaskName,
 
     @Column(nullable = true, length = 64)
     var remarks: String,
+
+    @Column(columnDefinition = "TEXT")
+    var argument: String,
 ) : BaseEntity()

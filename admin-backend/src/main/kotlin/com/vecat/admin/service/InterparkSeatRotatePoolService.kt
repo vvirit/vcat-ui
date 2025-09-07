@@ -27,11 +27,11 @@ class InterparkSeatRotatePoolService(
     data class AddPoolDTOItem(
         val roundId: Long,
         val blockId: Long,
-        var seatGrade: String,
-        var seatGradeName: String,
-        var floor: String,
-        var rowNo: String,
-        var seatNo: String,
+        var seatGrade: String = "",
+        var seatGradeName: String = "",
+        var floor: String = "",
+        var rowNo: String = "",
+        var seatNo: String = "",
     )
 
     data class AddPoolDTO(
@@ -136,28 +136,32 @@ class InterparkSeatRotatePoolService(
         return PageView(list, page, size, entityPage.totalElements)
     }
 
-  @Transactional
-  fun getAll(): List<InterparkSeatRotatePoolPageDTO> {
-    return poolRepository.findAll().map(this::mapToDTO)
-  }
+    @Transactional
+    fun getAll(): List<InterparkSeatRotatePoolPageDTO> {
+        return poolRepository.findAll().map(this::mapToDTO)
+    }
 
-  private fun mapToDTO(pool: InterparkSeatRotatePool): InterparkSeatRotatePoolPageDTO {
-    return InterparkSeatRotatePoolPageDTO(
-      pool.id!!,
-      pool.name,
-      pool.perform.id!!,
-      pool.perform.name,
-      pool.items.map { item ->
-        InterparkSeatRotatePoolPageDTOItem(
-          item.round.id!!,
-          item.block.id!!,
-          item.seatGrade,
-          item.seatGradeName,
-          item.floor,
-          item.rowNo,
-          item.seatNo,
+    private fun mapToDTO(pool: InterparkSeatRotatePool): InterparkSeatRotatePoolPageDTO {
+        return InterparkSeatRotatePoolPageDTO(
+            pool.id!!,
+            pool.name,
+            pool.perform.id!!,
+            pool.perform.name,
+            pool.items.map { item ->
+                InterparkSeatRotatePoolPageDTOItem(
+                    item.round.id!!,
+                    item.block.id!!,
+                    item.seatGrade,
+                    item.seatGradeName,
+                    item.floor,
+                    item.rowNo,
+                    item.seatNo,
+                )
+            }
         )
-      }
-    )
-  }
+    }
+
+    fun <T> getById(id: Long, transform: (InterparkSeatRotatePool) -> T): T {
+        return poolRepository.findById(id).map { transform(it) }.orElseThrow()
+    }
 }

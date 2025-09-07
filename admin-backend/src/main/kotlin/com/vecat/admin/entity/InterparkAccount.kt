@@ -12,8 +12,20 @@ data class InterparkAccount(
   @Column(nullable = false, length = 32, unique = true)
   var email: String,
 
-  @Column(nullable = false, length = 16)
+  @Column(nullable = false, length = 32)
   var password: String,
+
+  @Column(length = 32)
+  var memberCode: String? = null,
+
+  @Column(length = 32)
+  var mc: String? = null,
+
+  @Column(length = 64)
+  var enterEncryptVal: String? = null,
+
+  @Column(columnDefinition = "TEXT")
+  var cookie: String? = null,
 
   @Column
   var verified: Boolean,

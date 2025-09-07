@@ -3,10 +3,9 @@ import { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 
-import { paths } from 'src/routes/paths.js';
-
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteInterparkPerform, getPagedInterparkPerforms } from 'src/service/interpark-perform.js';
+import { getPagedInterparkOrders } from 'src/service/interpark-order.js';
+import { deleteInterparkPerform } from 'src/service/interpark-perform.js';
 
 import { Iconify } from 'src/components/iconify/index.js';
 import DataTable from 'src/components/vcat/VDataTable.jsx';
@@ -14,51 +13,74 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
+import PayDialog from './pay-dialog.jsx';
 
 let deleteId = null;
 
-const InterparkPerformList = () => {
+const InterparkOrderList = () => {
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
   const [createFormOpen, setCreateFormOpen] = useState(false);
   const tableRef = useRef();
   const [editingRow, setEditingRow] = useState(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [currentDetailId, setCurrentDetailId] = useState(null);
+  const [detailViewOpen, setDetailViewOpen] = useState(false);
 
   const columns = [
     {
       key: 'id',
       label: 'ID',
       dataIndex: 'id',
-      width: 80,
+      width: 70,
     },
     {
-      key: 'name',
-      label: 'Name',
-      dataIndex: 'name',
-      width: 160,
-    },
-    {
-      key: 'performCode',
-      label: 'Perform code',
-      dataIndex: 'performCode',
-      width: 130,
-    },
-    {
-      key: 'placeCode',
-      label: 'Place code',
-      dataIndex: 'placeCode',
+      key: 'productName',
+      label: 'Perform',
+      dataIndex: 'productName',
       width: 120,
     },
     {
-      key: 'rounds',
-      label: 'rounds',
-      render: (row) => row.rounds.map((it) => `${it.date}-${it.time}`).join(','),
+      key: 'email',
+      label: 'Email',
+      dataIndex: 'email',
+      width: 180,
     },
     {
-      key: 'blocks',
-      label: 'Blocks',
-      render: (row) => row.blocks.map((it) => it.name).join(','),
+      key: 'playDate',
+      label: 'Date',
+      dataIndex: 'playDate',
+      width: 80,
+    },
+    {
+      key: 'seat',
+      label: 'Seat',
+      render: (row) =>
+        `${row.seatGradeName}-${row.blockCode}-${row.floor}-${row.rowNo}-${row.seatNo}`,
+      width: 200,
+    },
+    {
+      key: 'bookingUserName',
+      label: 'Name',
+      dataIndex: 'bookingUserName',
+      width: 160,
+    },
+    {
+      key: 'bookingUserBirthDay',
+      label: 'Birthday',
+      dataIndex: 'bookingUserBirthDay',
+      width: 90,
+    },
+    {
+      key: 'createdAt',
+      label: 'Created At',
+      dataIndex: 'createdAt',
+      width: 180,
+    },
+    {
+      key: 'orderStatus',
+      label: 'Status',
+      dataIndex: 'orderStatus',
     },
     {
       key: 'actions',
@@ -66,23 +88,11 @@ const InterparkPerformList = () => {
       width: 120,
       render: (row) => (
         <>
-          <IconButton
-            color="default"
-            onClick={() => {
-              setEditingRow(row);
-              setCreateFormOpen(true);
-            }}
-          >
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-          <IconButton
-            color="error"
-            onClick={() => {
-              deleteId = row.id;
-              setConfirmDeleteOpen(true);
-            }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
+          <IconButton onClick={() => {
+            setCurrentDetailId(row.id);
+            setDetailViewOpen(true);
+          }}>
+            <Iconify icon="mdi:currency-usd-circle" />
           </IconButton>
         </>
       ),
@@ -92,23 +102,19 @@ const InterparkPerformList = () => {
   return (
     <DashboardContent>
       <CustomBreadcrumbs
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.interpark.root },
-          { name: 'Interpark', href: paths.dashboard.interpark.performList },
-          { name: 'Performs' },
-        ]}
+        links={[{ name: 'Dashboard' }, { name: 'Interpark' }, { name: 'Orders' }]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <DataTable
         ref={tableRef}
-        title="Interpark performs"
+        title="Interpark Orders"
         columns={columns}
         data={data}
-        enableCheck
         onCheck={setSelectedRows}
+        size="small"
         onFetchData={async (pagination) => {
-          const performs = await getPagedInterparkPerforms(pagination);
-          setData(performs);
+          const orders = await getPagedInterparkOrders(pagination);
+          setData(orders);
         }}
         actions={
           <>
@@ -117,16 +123,6 @@ const InterparkPerformList = () => {
                 Delete
               </Button>
             )}
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-              onClick={() => {
-                setEditingRow(null);
-                setCreateFormOpen(true);
-              }}
-            >
-              Add perform
-            </Button>
           </>
         }
       />
@@ -147,17 +143,26 @@ const InterparkPerformList = () => {
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={async () => {
-            await deleteInterparkPerform(deleteId);
-            setConfirmDeleteOpen(false);
-            tableRef.current.reload();
-          }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={async () => {
+              await deleteInterparkPerform(deleteId);
+              setConfirmDeleteOpen(false);
+              tableRef.current.reload();
+            }}
+          >
             Delete
           </Button>
         }
       />
+      {
+        detailViewOpen && (
+          <PayDialog orderId={currentDetailId} onCancel={() => setDetailViewOpen(false)}/>
+        )
+      }
     </DashboardContent>
   );
 };
 
-export default InterparkPerformList;
+export default InterparkOrderList;

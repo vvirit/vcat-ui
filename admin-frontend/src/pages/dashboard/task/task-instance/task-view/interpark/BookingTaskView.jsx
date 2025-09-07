@@ -1,52 +1,98 @@
 import { useState } from 'react';
 
 import { Grid } from '@mui/material';
-import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
 import TabPanel from 'src/components/tab-panel/index.jsx';
 import DataTable from 'src/components/vcat/VDataTable.jsx';
 
-const columns = [
+const queueWorkersColumns = [
   {
     key: 'id',
+    dataIndex: 'workerId',
     label: 'ID',
-    dataIndex: 'id',
-    width: 60,
+    width: 100,
+  },
+  {
+    key: 'processCount',
+    dataIndex: 'processCount',
+    label: 'Process Count',
+    width: 128,
+  },
+  {
+    key: 'email',
+    dataIndex: 'email',
+    label: 'Email',
+    width: 220,
   },
   {
     key: 'status',
-    label: 'Status',
     dataIndex: 'status',
-    width: 120,
-    render: (row) => {
-      if (row.status === 'RUNNING') {
-        return <Chip label={row.status} color="success" size="small" />;
-      } else {
-        return <Chip label={row.status} size="small" />;
-      }
-    },
+    label: 'Status',
+    width: 100,
   },
   {
-    key: 'account',
-    label: 'Account',
-    dataIndex: 'account',
-    width: 180,
+    key: 'queueNo',
+    dataIndex: 'queueNo',
+    label: 'Rank',
+    width: 80,
   },
   {
-    key: 'updateTime',
-    label: 'Update time',
-    dataIndex: 'updateTime',
-    width: 180,
+    key: 'totalQueueNo',
+    dataIndex: 'totalQueueNo',
+    label: 'Total Rank',
+    width: 130,
   },
   {
     key: 'message',
-    label: 'Message',
     dataIndex: 'message',
+    label: 'Message',
+    width: 260,
+  },
+  {
+    key: 'errorMessage',
+    dataIndex: 'errorMessage',
+    label: 'Error Message',
+  },
+];
+
+const bookingWorkersColumns = [
+  {
+    key: 'id',
+    dataIndex: 'workerId',
+    label: 'ID',
+    width: 100,
+  },
+  {
+    key: 'email',
+    dataIndex: 'email',
+    label: 'Email',
+    width: 220,
+  },
+  {
+    key: 'status',
+    dataIndex: 'status',
+    label: 'Status',
+    width: 100,
+  },
+  {
+    key: 'message',
+    dataIndex: 'message',
+    label: 'Message',
+    width: 240,
+  },
+  {
+    key: 'errorMessage',
+    dataIndex: 'errorMessage',
+    label: 'Error Message',
   },
 ];
 
 const BookingTaskView = ({ taskInstance }) => {
+  const state = JSON.parse(taskInstance.state);
+
+  console.log(state);
+  const resultItems = taskInstance.results.map((it) => JSON.parse(it.data));
 
   const [pagination, setPagination] = useState({
     pageNumber: 0,
@@ -193,8 +239,10 @@ const BookingTaskView = ({ taskInstance }) => {
     ],
   };
 
-  const threadList = data.threads.slice(pagination.page * pagination.pageSize, pagination.page * pagination.pageSize + pagination.pageSize);
-
+  const threadList = data.threads.slice(
+    pagination.page * pagination.pageSize,
+    pagination.page * pagination.pageSize + pagination.pageSize
+  );
 
   return (
     <>
@@ -275,18 +323,31 @@ const BookingTaskView = ({ taskInstance }) => {
       <TabPanel
         items={[
           {
-            key: 'threads-detail',
-            label: 'Threads detail',
+            key: 'queue-workers',
+            label: 'Queue Workers',
             children: (
               <DataTable
                 title="Interpark account groups"
-                columns={columns}
-                data={{
-                  list: threadList,
-                  pageIndex: pagination.pageNumber,
-                  pageSize: pagination.page,
-                  totalElements: data.threads.length,
+                columns={queueWorkersColumns}
+                fullData={state.queueWorkersInfo}
+                onFetchData={async (p) => {
+                  setPagination(p);
                 }}
+                rowId="id"
+                hideTopBar
+                size="small"
+                maxHeight={420}
+              />
+            ),
+          },
+          {
+            key: 'booking-workers',
+            label: 'Booking Workers',
+            children: (
+              <DataTable
+                title="Interpark account groups"
+                columns={bookingWorkersColumns}
+                fullData={state.bookingWorkersInfo}
                 onFetchData={async (p) => {
                   setPagination(p);
                 }}
