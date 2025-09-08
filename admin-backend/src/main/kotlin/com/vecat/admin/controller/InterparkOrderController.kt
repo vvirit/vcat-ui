@@ -1,17 +1,23 @@
 package com.vecat.admin.controller
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.vecat.admin.base.ResponseData
+import com.vecat.admin.constant.StatusCode
+import com.vecat.admin.entity.OrderStatus
+import com.vecat.admin.exception.BusinessException
 import com.vecat.admin.service.InterparkOrderService
 import com.vecat.admin.service.InterparkPerformService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.lang.Exception
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("/interpark-order")
+@RequestMapping("/api/interpark-order")
 class InterparkOrderController(
     val service: InterparkOrderService,
     val interparkPerformService: InterparkPerformService,
@@ -34,6 +40,7 @@ class InterparkOrderController(
         val bookingUserName: String,
         val bookingUserBirthDay: String,
         val bookingUserPhone: String,
+        val orderStatus: OrderStatus?,
         @get:JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         val createdAt: LocalDateTime?,
     )
@@ -61,6 +68,7 @@ class InterparkOrderController(
                 bookingUserName = it.bookingUserName,
                 bookingUserBirthDay = it.bookingUserBirthDay,
                 bookingUserPhone = it.bookingUserPhone,
+                orderStatus = it.orderStatus,
                 createdAt = it.createdAt,
             )
         }
@@ -122,5 +130,17 @@ class InterparkOrderController(
         val payInfo = service.getOrderPayInfo(id)
         val qrCodeUrl = service.getWechatPayQrCode(payInfo.payUrl)
         return PayInfo(qrCodeUrl)
+    }
+
+    @PostMapping("/{id}/finish-pay")
+    fun finishPay(@PathVariable id: Long): ResponseData<Unit> {
+        try {
+            service.finishPay(id)
+            return ResponseData(code = StatusCode.SUCCESS)
+        } catch (e: BusinessException) {
+            return ResponseData(code = StatusCode.ERROR, message = e.message)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

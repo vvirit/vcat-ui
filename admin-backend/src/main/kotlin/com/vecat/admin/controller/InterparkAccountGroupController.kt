@@ -7,7 +7,7 @@ import com.vecat.admin.service.InterparkAccountGroupService.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/interpark-account-group")
+@RequestMapping("/api/interpark-account-group")
 class InterparkAccountGroupController(
     val service: InterparkAccountGroupService,
 ) {

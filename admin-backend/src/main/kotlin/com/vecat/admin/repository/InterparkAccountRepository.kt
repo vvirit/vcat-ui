@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface InterparkAccountRepository: JpaRepository<InterparkAccount, Long>, JpaSpecificationExecutor<InterparkAccount> {
     fun findFirstByEmail(email: String): InterparkAccount?
+    fun findByEmailIn(emails: List<String>): List<InterparkAccount>
 }

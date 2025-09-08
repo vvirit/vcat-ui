@@ -69,4 +69,13 @@ class NodeService(
         remoteService.sendRemote(dto.nodeId, RemoteAction.RUN_TASK, dto)
         redisTemplate.opsForValue().set("task:${dto.instanceId}:args", dto.argument)
     }
+
+    data class StopTaskDTO(
+        val nodeId: String,
+        val instanceId: String,
+    )
+
+    fun stopTask(dto: StopTaskDTO) {
+        remoteService.sendRemote(dto.nodeId, RemoteAction.STOP_TASK, dto)
+    }
 }

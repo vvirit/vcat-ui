@@ -96,4 +96,14 @@ class InterparkAccountService(
     fun deletePool(id: Long) {
         repository.deleteById(id)
     }
+
+    @Transactional
+    fun add(accounts: List<InterparkAccount>) {
+        repository.saveAll(accounts)
+    }
+
+    @Transactional
+    fun <T> findByEmailIn(emails: List<String>, transform: (InterparkAccount) -> T): List<T> {
+        return repository.findByEmailIn(emails).map { transform(it) }
+    }
 }

@@ -5,20 +5,45 @@ import com.vecat.admin.constant.StatusCode
 import com.vecat.admin.entity.Proxy
 import com.vecat.admin.entity.ProxyType
 import com.vecat.admin.service.ProxyService
+import jakarta.persistence.Column
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/proxy")
+@RequestMapping("/api/proxy")
 class ProxyController(
     val service: ProxyService,
 ) {
+
+    data class ProxyPageVO(
+        var id: Long,
+        var name: String? = null,
+        var type: ProxyType? = null,
+        var host: String? = null,
+        var port: Int? = null,
+        var username: String? = null,
+        var password: String? = null,
+    )
 
     @GetMapping
     fun list(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int
-    ): Page<Proxy> = service.getPagedProxies(page, pageSize)
+    ): PageView<ProxyPageVO> {
+        return service.getPagedProxies(page, pageSize) {
+            ProxyPageVO(
+                id = it.id!!,
+                name = it.name,
+                type = it.type,
+                host = it.host,
+                port = it.port,
+                username = it.username,
+                password = it.password
+            )
+        }
+    }
 
     data class AddProxyRequestProxy(
         val host: String,

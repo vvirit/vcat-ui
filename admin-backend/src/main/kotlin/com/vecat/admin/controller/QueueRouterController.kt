@@ -9,7 +9,7 @@ import com.vecat.admin.service.QueueRouterService.UpdateRouterDTO
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/queue-router")
+@RequestMapping("/api/queue-router")
 class QueueRouterController(
   val service: QueueRouterService,
 ) {

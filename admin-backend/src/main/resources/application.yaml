@@ -1,10 +1,19 @@
+
 spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
   mvc:
-    servlet:
-      path: /api
+    static-path-pattern: /**
+  web:
+    resources:
+      # 静态资源位置（已把前端丢到 classpath:/static/）
+      static-locations: classpath:/static/
+      # 默认缓存策略（给带 hash 的构建产物较长缓存）
+      cache:
+        cachecontrol:
+          max-age: 365d
+          cache-public: true
   application:
     name: vcat-admin-backend
   datasource:
@@ -18,4 +27,7 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6379
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${APP_PASSWORD}
+server:
+  port: 34722

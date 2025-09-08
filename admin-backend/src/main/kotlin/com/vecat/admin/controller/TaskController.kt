@@ -11,7 +11,7 @@ import com.vecat.admin.service.TaskService.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/api/task")
 class TaskController(
     val service: TaskService,
     val objectMapper: ObjectMapper,

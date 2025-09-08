@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
  * @since 2025-08-17
  */
 @RestController
-@RequestMapping("/interpark-seat-rotate-pool")
+@RequestMapping("/api/interpark-seat-rotate-pool")
 class InterparkSeatRotatePoolController(
     val service: InterparkSeatRotatePoolService,
 ) {

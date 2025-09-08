@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/interpark-perform")
+@RequestMapping("/api/interpark-perform")
 class InterparkPerformController(
     val service: InterparkPerformService,
 ) {

@@ -16,6 +16,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog/index.js';
 
 import CreateForm from './form.jsx';
 import TaskView from './task-view/TaskView.jsx';
+import { stopTask } from '../../../../service/node.js';
 
 let deleteId = null;
 
@@ -90,9 +91,11 @@ const TaskInstanceList = () => {
           </IconButton>
           <IconButton
             color="error"
-            onClick={() => {
-              deleteId = row.id;
-              setConfirmDeleteOpen(true);
+            onClick={async () => {
+              await stopTask({
+                nodeId: row.nodeId,
+                instanceId: row.id,
+              })
             }}
           >
             <Iconify icon="mingcute:stop-fill" />

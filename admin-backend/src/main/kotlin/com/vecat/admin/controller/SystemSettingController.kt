@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
  * @since 2025-08-30
  */
 @RestController
-@RequestMapping("/system-setting")
+@RequestMapping("/api/system-setting")
 class SystemSettingController(
     val service: SystemSettingService,
 ) {

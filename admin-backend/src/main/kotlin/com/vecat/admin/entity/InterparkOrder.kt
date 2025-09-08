@@ -3,6 +3,8 @@ package com.vecat.admin.entity
 import com.vecat.admin.base.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Table
 
 @Entity
@@ -64,4 +66,10 @@ data class InterparkOrder(
 
     @Column(length = 16)
     var cartIdSeq: String? = null,
+
+    @Column(length = 256)
+    var payUrl: String? = null,
+
+    @Enumerated(EnumType.STRING)
+    var orderStatus: OrderStatus = OrderStatus.CREATED,
 ) : BaseEntity()

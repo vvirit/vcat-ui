@@ -24,10 +24,10 @@ data class Proxy(
   @Enumerated(EnumType.STRING)
   var type: ProxyType? = null,
 
-  @Column(nullable = true, length = 32, unique = false)
+  @Column(nullable = true, length = 128, unique = false)
   var host: String? = null,
 
-  @Column(nullable = true, length = 32, unique = false)
+  @Column(nullable = true, unique = false)
   var port: Int? = null,
 
   @Column(nullable = true, length = 128, unique = false)

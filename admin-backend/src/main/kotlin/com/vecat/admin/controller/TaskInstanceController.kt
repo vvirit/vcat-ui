@@ -6,7 +6,7 @@ import com.vecat.admin.service.TaskInstanceService.TaskInstanceDTO
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/task-instance")
+@RequestMapping("/api/task-instance")
 class TaskInstanceController(
     val service: TaskInstanceService,
 ) {

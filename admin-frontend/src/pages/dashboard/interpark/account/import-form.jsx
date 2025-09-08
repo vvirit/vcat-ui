@@ -28,7 +28,7 @@ export default function ImportForm({ open, onCancel, onSuccess, data }) {
       setSaving(true);
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch("/api/upload", {
+      const res = await fetch("/api/interpark-account/import", {
         method: "POST",
         body: formData,
       });

@@ -1,15 +1,18 @@
+import { useState } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import Alert from '@mui/material/Alert';
 
 import { useOnceData } from 'src/hooks/use-data.js';
 
-import { getPayInfo, getInterparkOrder } from 'src/service/interpark-order.js';
+import { finishPay, getPayInfo, getInterparkOrder } from 'src/service/interpark-order.js';
 
 import VDialog from 'src/components/vcat/VDialog.jsx';
 import VFormGroup from 'src/components/vcat/VFormGroup.jsx';
 import VDescriptions from 'src/components/vcat/VDescriptions.jsx';
 
-const PayDialog = ({ orderId, onCancel }) => {
+const PayDialog = ({ orderId, onCancel, onFinish }) => {
+
+  const [errorMessage, setErrorMessage] = useState();
 
   const { data: order } = useOnceData({
     key: ['order'],
@@ -21,8 +24,23 @@ const PayDialog = ({ orderId, onCancel }) => {
     query: async () => await getPayInfo(orderId),
   });
 
+  const handlePay = async () => {
+    setErrorMessage(null);
+    const response = await finishPay(orderId)
+    if (response.status !== 'SUCCESS') {
+      setErrorMessage(response.message);
+    } else {
+      onFinish();
+    }
+  };
+
   return (
-    <VDialog title="Pay Order" okText="Finish" open onCancel={onCancel}>
+    <VDialog title="Pay Order" okText="Finish" open onCancel={onCancel} onOk={handlePay}>
+      {!!errorMessage && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {errorMessage}
+        </Alert>
+      )}
       <VDescriptions
         items={[
           {

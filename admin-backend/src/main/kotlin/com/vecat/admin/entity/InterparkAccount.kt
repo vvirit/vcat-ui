@@ -9,19 +9,19 @@ import jakarta.persistence.Table
 @Table(name = "t_interpark_account")
 data class InterparkAccount(
 
-  @Column(nullable = false, length = 32, unique = true)
+  @Column(nullable = false, length = 128, unique = true)
   var email: String,
 
   @Column(nullable = false, length = 32)
   var password: String,
 
-  @Column(length = 32)
+  @Column(length = 128)
   var memberCode: String? = null,
 
-  @Column(length = 32)
+  @Column(length = 128)
   var mc: String? = null,
 
-  @Column(length = 64)
+  @Column(length = 128)
   var enterEncryptVal: String? = null,
 
   @Column(columnDefinition = "TEXT")
@@ -34,5 +34,5 @@ data class InterparkAccount(
   var disabled: Boolean,
 
   @Column(nullable = true, length = 64)
-  var remarks: String,
+  var remarks: String? = null,
 ) : BaseEntity()

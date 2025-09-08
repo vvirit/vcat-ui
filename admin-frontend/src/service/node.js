@@ -9,3 +9,8 @@ export async function runTask(data) {
   const response = await axios.post('/api/node/run-task', data);
   return response.data;
 }
+
+export async function stopTask(data) {
+  const response = await axios.post('/api/node/stop-task', data);
+  return response.data;
+}

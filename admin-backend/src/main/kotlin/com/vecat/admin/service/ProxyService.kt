@@ -1,5 +1,6 @@
 package com.vecat.admin.service
 
+import com.vecat.admin.controller.PageView
 import com.vecat.admin.entity.Proxy
 import com.vecat.admin.entity.ProxyProtocol
 import com.vecat.admin.entity.ProxyType
@@ -23,9 +24,10 @@ data class ProxyConfig(
 class ProxyService(
     val repository: ProxyRepository,
 ) {
-    fun getPagedProxies(page: Int, size: Int): Page<Proxy> {
+    fun <T> getPagedProxies(page: Int, size: Int, transform: (Proxy) -> T): PageView<T> {
         val pageable = PageRequest.of(page, size)
-        return repository.findAll(pageable)
+        val pageData = repository.findAll(pageable)
+        return PageView(pageData.content.map(transform), page, size, pageData.totalElements)
     }
 
     @Transactional

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.vecat.admin.api.InterparkApi
 import com.vecat.admin.controller.PageView
 import com.vecat.admin.entity.InterparkOrder
+import com.vecat.admin.entity.OrderStatus
+import com.vecat.admin.exception.BusinessException
 import com.vecat.admin.http.FormItem
 import com.vecat.admin.http.OkHttpHttpClient
 import com.vecat.admin.repository.InterparkOrderRepository
@@ -76,6 +78,7 @@ class InterparkOrderService(
         val confirmInfo = api.bookConfirm(orderForm)
         order.cartId = confirmInfo.cartId
         order.cartIdSeq = confirmInfo.cartIdSeq
+        order.payUrl = confirmInfo.payUrl
         return confirmInfo
     }
 
@@ -88,5 +91,33 @@ class InterparkOrderService(
         val eximbayCheckPayMethodForm = api.eximbayCheckPayMethod(eximbayCheckApprvForm)
         val wechatQrRequestForm = api.wechatQrRequest(eximbayCheckPayMethodForm)
         return api.wechatQrStep2(wechatQrRequestForm)
+    }
+
+    @Transactional
+    fun finishPay(orderId: Long) {
+        val order = repository.findById(orderId).orElseGet { null } ?: throw BusinessException("Order not exists")
+        if (order.payUrl.isNullOrBlank()) {
+            throw RuntimeException("Pay url not exists")
+        }
+        val paramKey = order.payUrl!!.substringAfter("paramkey=")
+        val httpClient = OkHttpHttpClient()
+        val api = InterparkApi(httpClient)
+        val result = api.webchatPayCheck(paramKey)
+        if (!result) {
+            throw BusinessException("Payment is not finished")
+        }
+        val form = api.eximbayStep3(InterparkApi.FormData(
+            action = "https://secureapi.ext.eximbay.com/Gateway/BasicProcessor/230/NewGlobalStep3.jsp",
+            form = listOf(
+                Pair("paramkey", paramKey)
+            )
+        ))
+        val paySuccess = api.interparkFinishOrder(form)
+        if (paySuccess) {
+            order.orderStatus = OrderStatus.PAY_SUCCESS
+            repository.save(order)
+        } else {
+            throw RuntimeException("Pay failed, please retry")
+        }
     }
 }

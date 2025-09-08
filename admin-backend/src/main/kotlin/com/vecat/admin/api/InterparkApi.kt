@@ -276,4 +276,43 @@ class InterparkApi(
         val imageUrl = document.select(".qr_cont img").attr("src")
         return "https://secureapi.ext.eximbay.com/${imageUrl}"
     }
+
+    data class FormData(
+        val action: String,
+        val form: List<Pair<String, String>>,
+    )
+
+    fun eximbayStep3(formData: FormData): FormData {
+        val response = httpClient.post(formData.action) {
+            setFormBody {
+                formData.form.forEach {
+                    append(it.first, it.second)
+                }
+            }
+        }
+        if (!response.success) {
+            throw RuntimeException("api [eximbayStep3] status code is ${response.status}")
+        }
+        val document = response.xmlBody()
+        val form = document.select("form")
+        val action = response.stringBody().substringAfter("\$(\"#regForm\").attr(\"action\", \"").substringBefore("\"").trim()
+        val formData = form.select("input").map {
+            Pair(it.attr("name"), it.attr("value"))
+        }
+        return FormData(action, formData)
+    }
+
+    fun interparkFinishOrder(formData: FormData): Boolean {
+        val response = httpClient.post(formData.action) {
+            setFormBody {
+                formData.form.forEach {
+                    append(it.first, it.second)
+                }
+            }
+        }
+        if (!response.success) {
+            throw RuntimeException("api [interparkFinishOrder] status code is ${response.status}")
+        }
+        return response.stringBody().contains("if (\"N\" == \"Y\")")
+    }
 }

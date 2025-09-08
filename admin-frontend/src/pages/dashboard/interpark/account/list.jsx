@@ -164,7 +164,7 @@ const InterparkAccountList = () => {
           open={importFormOpen}
           onCancel={() => setImportFormOpen(false)}
           onSuccess={() => {
-            setCreateFormOpen(false);
+            setImportFormOpen(false);
             tableRef.current?.reload();
           }}
         />

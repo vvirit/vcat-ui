@@ -88,10 +88,12 @@ const InterparkOrderList = () => {
       width: 120,
       render: (row) => (
         <>
-          <IconButton onClick={() => {
-            setCurrentDetailId(row.id);
-            setDetailViewOpen(true);
-          }}>
+          <IconButton
+            onClick={() => {
+              setCurrentDetailId(row.id);
+              setDetailViewOpen(true);
+            }}
+          >
             <Iconify icon="mdi:currency-usd-circle" />
           </IconButton>
         </>
@@ -149,18 +151,23 @@ const InterparkOrderList = () => {
             onClick={async () => {
               await deleteInterparkPerform(deleteId);
               setConfirmDeleteOpen(false);
-              tableRef.current.reload();
+              tableRef.current?.reload();
             }}
           >
             Delete
           </Button>
         }
       />
-      {
-        detailViewOpen && (
-          <PayDialog orderId={currentDetailId} onCancel={() => setDetailViewOpen(false)}/>
-        )
-      }
+      {detailViewOpen && (
+        <PayDialog
+          orderId={currentDetailId}
+          onCancel={() => setDetailViewOpen(false)}
+          onFinish={() => {
+            setDetailViewOpen(false);
+            tableRef.current?.reload();
+          }}
+        />
+      )}
     </DashboardContent>
   );
 };
