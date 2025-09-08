@@ -55,6 +55,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/config`,
       proxyList: `${ROOTS.DASHBOARD}/config/proxy-list`,
       systemSettingList: `${ROOTS.DASHBOARD}/config/system-setting-list`,
+      webHookList: `${ROOTS.DASHBOARD}/config/web-hook-list`,
     },
     task: {
       root: `${ROOTS.DASHBOARD}/task`,

@@ -38,6 +38,7 @@ const ProxyListPage = lazy(() => import('src/pages/dashboard/config/proxy/list')
 const QueueRouterListPage = lazy(() => import('src/pages/dashboard/task/queue-routers/list.jsx'));
 const TaskInstanceListPage = lazy(() => import('src/pages/dashboard/task/task-instance/list.jsx'));
 const SystemSettingListPage = lazy(() => import('src/pages/dashboard/config/system-setting/list'));
+const WebHookListPage = lazy(() => import('src/pages/dashboard/config/web-hook/list'));
 
 // ----------------------------------------------------------------------
 
@@ -85,7 +86,8 @@ export const dashboardRoutes = [
         path: 'config',
         children: [
           { path: 'proxy-list', element: <ProxyListPage /> },
-          { path: 'system-setting-list', element: <SystemSettingListPage /> }
+          { path: 'system-setting-list', element: <SystemSettingListPage /> },
+          { path: 'web-hook-list', element: <WebHookListPage /> }
         ],
       },
       {
