@@ -12,6 +12,8 @@ import com.vecat.admin.service.InterparkSeatRotatePoolService
 import com.vecat.admin.service.ProxyConfig
 import com.vecat.admin.service.ProxyService
 import com.vecat.admin.service.SystemSettingService
+import com.vecat.admin.service.WebHookService
+import com.vecat.admin.service.WebhookDTO
 import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
@@ -22,6 +24,7 @@ class InterparkBookingTaskArgumentBuilder(
     val interparkAccountGroupService: InterparkAccountGroupService,
     val systemSettingService: SystemSettingService,
     val seatRotatePoolService: InterparkSeatRotatePoolService,
+    val webHookService: WebHookService,
 ) : TaskArgumentBuilder<Config, Argument> {
 
     override val taskCategory: TaskCategory = TaskCategory.INTERPARK
@@ -51,6 +54,7 @@ class InterparkBookingTaskArgumentBuilder(
         val queueConfig: QueueConfig,
         val bookingConfig: BookingConfig,
         val accounts: List<BookingAccount>,
+        val webhooks: List<WebhookDTO>,
     )
 
     data class Product(
@@ -200,6 +204,15 @@ class InterparkBookingTaskArgumentBuilder(
                     enterEncryptVal = it.enterEncryptVal ?: "",
                 )
             },
+            webhooks = webHookService.getAll {
+                WebhookDTO(
+                    name = this.name,
+                    type = this.type,
+                    url = this.url,
+                    method = this.method,
+                    body = this.body,
+                )
+            }
         )
     }
 }

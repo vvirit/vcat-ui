@@ -18,7 +18,7 @@ import EditTable from 'src/components/vcat/VEditTable.jsx';
 
 import { Iconify } from '../../../../components/iconify/index.js';
 
-export default function CreateForm({ open, onCancel }) {
+export default function CreateForm({ open, onCancel, onSuccess }) {
 
   const [type, setType] = useState('STANDARD');
   const [errorMessage, setErrorMessage] = useState();
@@ -76,7 +76,6 @@ export default function CreateForm({ open, onCancel }) {
           password: items[3] || '',
         };
       });
-    console.log(rows);
     tableRef.current.resetData(rows);
   };
 
@@ -94,7 +93,7 @@ export default function CreateForm({ open, onCancel }) {
     try {
       setSaving(true);
       await addProxy(payload);
-      onCancel();
+      onSuccess();
     } catch (e) {
       setErrorMessage(e.message);
     } finally {

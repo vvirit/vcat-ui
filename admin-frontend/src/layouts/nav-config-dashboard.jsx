@@ -76,7 +76,7 @@ export const navData = [
         children: [
           { title: 'Proxy', path: paths.dashboard.config.proxyList },
           { title: 'System Setting', path: paths.dashboard.config.systemSettingList },
-          { title: 'WebHook', path: paths.dashboard.config.webHookList },
+          { title: 'Webhook', path: paths.dashboard.config.webHookList },
         ],
       },
     ],

@@ -115,7 +115,16 @@ const VDataTable = forwardRef(
       }
       columns.forEach((column) => {
         rowCells.push(
-          <TableCell key={column.key} sx={{ width: column.width || 'auto' }}>
+          <TableCell
+            key={column.key}
+            sx={{
+              whiteSpace: 'nowrap', // 不换行
+              overflow: 'hidden', // 超出隐藏
+              textOverflow: 'ellipsis', // 超出显示省略号
+              maxWidth: column.width || 'auto', // 一定要有固定宽度或 maxWidth，否则不会生效
+            }}
+            title={column.render ? column.render(row) : row[column.dataIndex]}
+          >
             {column.render ? column.render(row) : row[column.dataIndex]}
           </TableCell>
         );

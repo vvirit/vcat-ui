@@ -2,15 +2,30 @@ package com.vecat.admin.service
 
 import com.vecat.admin.controller.PageView
 import com.vecat.admin.entity.WebHook
+import com.vecat.admin.entity.WebHookMethod
+import com.vecat.admin.entity.WebHookType
 import com.vecat.admin.repository.WebHookRepository
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
+data class WebhookDTO(
+    val name: String,
+    val type: WebHookType,
+    val url: String,
+    val method: WebHookMethod,
+    val body: String,
+)
+
 @Service
 class WebHookService(
     val repository: WebHookRepository,
 ) {
+
+    @Transactional
+    fun <T> getAll(transform: WebHook.() -> T): List<T> {
+        return repository.findAll().map { transform(it) }
+    }
 
     @Transactional
     fun <T> getPagedList(page: Int, size: Int, transform: (WebHook) -> T): PageView<T> {

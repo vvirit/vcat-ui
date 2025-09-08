@@ -35,7 +35,7 @@ const PayDialog = ({ orderId, onCancel, onFinish }) => {
   };
 
   return (
-    <VDialog title="Pay Order" okText="Finish" open onCancel={onCancel} onOk={handlePay}>
+    <VDialog title="Pay Order" okText="Finish" open onCancel={onCancel} onOk={handlePay} maxWidth={1300}>
       {!!errorMessage && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {errorMessage}

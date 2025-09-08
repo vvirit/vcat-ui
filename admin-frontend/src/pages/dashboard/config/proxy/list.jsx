@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Button from '@mui/material/Button';
 
@@ -11,9 +11,10 @@ import DataTable from 'src/components/vcat/VDataTable.jsx';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs/index.js';
 
 import CreateForm from './form.jsx';
-import {getPagedProxies} from "../../../../service/proxy.js";
+import { getPagedProxies } from '../../../../service/proxy.js';
 
 export default function ProxyListPage() {
+  const tableRef = useRef();
   const [newProxyDialogOpen, setNewProxyDialogOpen] = useState(false);
   const [listData, setListData] = useState();
 
@@ -61,6 +62,7 @@ export default function ProxyListPage() {
       />
       <DataTable
         title="Proxy"
+        ref={tableRef}
         actions={
           <Button
             variant="contained"
@@ -77,11 +79,18 @@ export default function ProxyListPage() {
           setListData(data);
         }}
       />
-      {
-        newProxyDialogOpen && (
-          <CreateForm open={newProxyDialogOpen} onCancel={() => setNewProxyDialogOpen(false)} />
-        )
-      }
+      {newProxyDialogOpen && (
+        <CreateForm
+          open={newProxyDialogOpen}
+          onCancel={() => {
+            setNewProxyDialogOpen(false);
+          }}
+          onSuccess={() => {
+            tableRef.current?.reload();
+            setNewProxyDialogOpen(false);
+          }}
+        />
+      )}
     </DashboardContent>
   );
 }

@@ -2,6 +2,7 @@ package com.vecat.admin.remote.redis
 
 import com.vecat.admin.remote.RemoteMessageHandler
 import com.vecat.admin.remote.ServerAction
+import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -30,6 +31,7 @@ class RedisStreamsConfig(
     }
 
     private val consumerName = "c-" + UUID.randomUUID().toString().take(8)
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Bean
     fun streamContainer(template: StringRedisTemplate): StreamMessageListenerContainer<String, MapRecord<String, String, String>> {
@@ -62,7 +64,11 @@ class RedisStreamsConfig(
             val nodeId = map["nodeId"]!!
             val action = map["action"]!!
             val payload = map["payload"]!!
-            remoteMessageHandler.onReceiveData(nodeId, ServerAction.valueOf(action), payload)
+            try {
+                remoteMessageHandler.onReceiveData(nodeId, ServerAction.valueOf(action), payload)
+            } catch (e: Exception) {
+                logger.error("消息处理失败", e)
+            }
             ops.delete(STREAM_KEY, msg.id)
         }
         container.start()

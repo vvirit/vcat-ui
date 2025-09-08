@@ -25,7 +25,7 @@ data class WebHook(
     @Enumerated(EnumType.STRING)
     var type: WebHookType,
 
-    @Column(length = 50)
+    @Column(length = 256)
     var url: String,
 
     @Enumerated(EnumType.STRING)

@@ -8,6 +8,7 @@ import com.vecat.admin.repository.TaskInstanceRepository
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionTemplate
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -18,6 +19,7 @@ class NodeService(
     private val remoteService: RemoteService,
     private val redisTemplate: StringRedisTemplate,
     private val objectMapper: ObjectMapper,
+    private val transactionTemplate: TransactionTemplate,
 ) {
 
     data class NodeInfo(
@@ -54,18 +56,19 @@ class NodeService(
     /**
      * 分发任务到任务节点
      */
-    @Transactional
     fun dispatchTask(dto: DispatchTaskDTO) {
-        val taskInstance = TaskInstance(
-            nodeId = dto.nodeId,
-            name = dto.name,
-            taskName = dto.taskName,
-            argument = dto.argument,
-            remarks = dto.remarks,
-            status = TaskInstanceStatus.CREATED,
-        )
-        val saved = taskInstanceRepository.save(taskInstance)
-        dto.instanceId = saved.id.toString()
+        val saved = transactionTemplate.execute {
+            val taskInstance = TaskInstance(
+                nodeId = dto.nodeId,
+                name = dto.name,
+                taskName = dto.taskName,
+                argument = dto.argument,
+                remarks = dto.remarks,
+                status = TaskInstanceStatus.CREATED,
+            )
+            taskInstanceRepository.save(taskInstance)
+        }
+        dto.instanceId = saved!!.id.toString()
         remoteService.sendRemote(dto.nodeId, RemoteAction.RUN_TASK, dto)
         redisTemplate.opsForValue().set("task:${dto.instanceId}:args", dto.argument)
     }

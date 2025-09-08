@@ -44,7 +44,7 @@ const WebHookList = () => {
       key: 'type',
       label: 'Type',
       dataIndex: 'type',
-      width: 80,
+      width: 90,
     },
     {
       key: 'url',

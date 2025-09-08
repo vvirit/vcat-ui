@@ -44,13 +44,13 @@ const InterparkOrderList = () => {
       key: 'email',
       label: 'Email',
       dataIndex: 'email',
-      width: 180,
+      width: 280,
     },
     {
       key: 'playDate',
       label: 'Date',
       dataIndex: 'playDate',
-      width: 80,
+      width: 100,
     },
     {
       key: 'seat',
@@ -69,7 +69,7 @@ const InterparkOrderList = () => {
       key: 'bookingUserBirthDay',
       label: 'Birthday',
       dataIndex: 'bookingUserBirthDay',
-      width: 90,
+      width: 100,
     },
     {
       key: 'createdAt',

@@ -28,7 +28,7 @@ class TaskInstanceService(
 
     @Transactional
     fun updateTaskInstance(dto: UpdateTaskInstanceDTO) {
-        val id = dto.taskId.replace("task-", "").toLong()
+        val id = dto.taskId.toLong()
         val taskInstance = repository.findById(id).get()
         taskInstance.apply {
             if (!dto.info.isNullOrBlank()) {
